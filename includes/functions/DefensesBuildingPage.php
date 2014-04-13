@@ -166,6 +166,8 @@ function DefensesBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 				// Case nombre d'elements a construire
 				$PageTable .= "<th class=k>";
 				// Si ... Et Seulement si je peux construire je mets la p'tite zone de saisie
+				$maxElement = GetMaxConstructibleElements($Element, $CurrentPlanet);
+                 if ($maxElement > MAX_FLEET_OR_DEFS_PER_ROW) $maxElement = MAX_FLEET_OR_DEFS_PER_ROW;
 				if ($CanBuildOne) {
 					$InQueue = strpos ( $CurrentPlanet['b_hangar_id'], $Element.",");
 					$IsBuild = ($CurrentPlanet[$resource[407]] >= 1) ? true : false;
@@ -181,7 +183,10 @@ function DefensesBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 						$PageTable .= "<font color=\"red\">".$lang['only_one']."</font>";
 					} else {
 						$TabIndex++;
-						$PageTable .= "<input type=text name=fmenge[".$Element."] alt='".$lang['tech'][$Element]."' size=5 maxlength=5 value=0 tabindex=".$TabIndex.">";
+						$PageTable .= "<input type=text name=fmenge[".$Element."] alt='".$lang['tech'][$Element]."' value=0 tabindex=".$TabIndex.">";
+						if ($CanBuildOne)
+						$PageTable .= "<br>(<a href='javascript:' onclick=\"document.getElementsByName('fmenge[".$Element."]')[0].value = '$maxElement';\">Max : {$maxElement}</a>)";
+
 						$PageTable .= "</th>";
 					}
 				} else {

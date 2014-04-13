@@ -140,16 +140,11 @@ function FleetBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
                    $PageTable .= "<input type=text id=fmenge[".$Element."] name=fmenge[".$Element."] alt='".$lang['tech'][$Element]."' value=0 tabindex=".$TabIndex.">";
                 }
 
-		$MaxElements   = GetMaxConstructibleElements ( $Element, $CurrentPlanet );
-
-                if($MaxElements>MAX_FLEET_OR_DEFS_PER_ROW)
-                 $MaxElements=MAX_FLEET_OR_DEFS_PER_ROW;
-
-                   if ($BuildOneElementTime > 0) {
-                 $MaxElements=1; }
+				$maxElement = GetMaxConstructibleElements($Element, $CurrentPlanet);
+                 if ($maxElement > MAX_FLEET_OR_DEFS_PER_ROW) $maxElement = MAX_FLEET_OR_DEFS_PER_ROW;
 
                 if ($CanBuildOne)
-                 $PageTable.='<BR><BR><A ONCLICK="document.getElementById(\'fmenge['.$Element.']\').value=\''.intval($MaxElements).'\';" STYLE="cursor:pointer;">Nombre max ('.intval($MaxElements).')</A>';
+                 $PageTable .= "<br>(<a href='javascript:' onclick=\"document.getElementsByName('fmenge[".$Element."]')[0].value = '$maxElement';\">Max : {$maxElement}</a>)";
 
 
 				// Fin de ligne (les 3 cases sont construites !!

@@ -45,7 +45,7 @@ if ( defined('INSIDE') ) {
 	// Nombre maximum d'element dans la liste de construction de batiments
 	define('MAX_BUILDING_QUEUE_SIZE'  , 5);
 	// Nombre maximum d'element dans une ligne de liste de construction flotte et defenses
-	define('MAX_FLEET_OR_DEFS_PER_ROW', 1000);
+	define('MAX_FLEET_OR_DEFS_PER_ROW', 1000000000);
 	// Taux de depassement possible dans l'espace de stockage des hangards ...
 	// 1.0 pour 100% - 1.1 pour 110% etc ...
 	define('MAX_OVERFLOW'             , 1.1);
