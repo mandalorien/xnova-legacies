@@ -50,9 +50,10 @@ if ( defined('INSIDE') ) {
 	// 1.0 pour 100% - 1.1 pour 110% etc ...
 	define('MAX_OVERFLOW'             , 1.1);
 	// Affiche les administrateur dans la page des records ...
-	// 0 -> les affiche
-	// 1 -> les affiche pas
+	// 0 -> les affiche pas
+	// 1 -> les affiche
 	define('SHOW_ADMIN_IN_RECORDS'    , 0);
+	define('SHOW_RECORDS'    , 1);
 
 	// Valeurs de bases pour les colonies ou planetes fraichement crées
 	define('BASE_STORAGE_SIZE'        , 1000000);

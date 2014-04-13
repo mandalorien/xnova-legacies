@@ -72,32 +72,38 @@ if(!file_exists($cacheFile) || (time() - filemtime($cacheFile)) > $timeDelay)
     $parse['defenses']  = parsetemplate($headerTpl, $bloc);
 
 
-    foreach($lang['tech'] as $element => $elementName)
-    {
-        if(!empty($elementName) && !empty($resource[$element]))
-        {
-            $data = array();
-            if($element >= 0 && $element <  100 || $element >= 200 && $element < 600)
-            {
-                $record = doquery(sprintf(
-                    'SELECT IF(COUNT(u.username)<=10,GROUP_CONCAT(DISTINCT u.username ORDER BY u.username DESC SEPARATOR ", "),"Plus de 10 joueurs ont ce record") AS players, p.%1$s AS level ' .
-                    'FROM {{table}}users AS u ' .
-                    'LEFT JOIN {{table}}planets AS p ON (u.id=p.id_owner) ' .
-                    'WHERE p.%1$s=(SELECT MAX(p2.%1$s) FROM {{table}}planets AS p2) AND p.%1$s>0 ' .
-                    'GROUP BY p.%1$s ORDER BY u.username ASC', $resource[$element]), '', true);
-            }
-            else if($element >= 100 && $element < 200)
-            {
-                $record = doquery(sprintf(
-                    'SELECT IF(COUNT(u.username)<=10,GROUP_CONCAT(DISTINCT u.username ORDER BY u.username DESC SEPARATOR ", "),"Plus de 10 joueurs ont ce record") AS players, u.%1$s AS level ' .
-                    'FROM {{table}}users AS u ' .
-                    'WHERE u.%1$s=(SELECT MAX(u2.%1$s) FROM {{table}}users AS u2) AND u.%1$s>0 ' .
-                    'GROUP BY u.%1$s ORDER BY u.username ASC', $resource[$element]), '', true);
-            }
-            else
-            {
-                continue;
-            }
+   foreach($lang['tech'] as $element => $elementName)
+{
+if(!empty($elementName) && !empty($resource[$element]))
+{
+	$data = array();
+	$ConditionShowAdmin = SHOW_ADMIN_IN_RECORDS == 0 ? "AND u.authlevel = 0 " : "";
+
+	if(in_array($element, $reslist['build']) || in_array($element, $reslist['fleet']) || in_array($element, $reslist['defense']))
+	{
+		$Qry = <<<SQL
+		SELECT IF(COUNT(DISTINCT u.username)<= 3, GROUP_CONCAT(DISTINCT u.username ORDER BY u.username DESC SEPARATOR ", "),"Plus de 3 joueurs ont ce record") AS players, p.{$resource[$element]} AS level
+		FROM {{table}}users AS u
+		LEFT JOIN {{table}}planets AS p ON p.{$resource[$element]} = (SELECT MAX(`{$resource[$element]}`) FROM {{table}}planets AS p LEFT JOIN {{table}}users AS u ON (u.id=p.id_owner) WHERE p.{$resource[$element]} > 0 {$ConditionShowAdmin} {$ShowPlayerRecords})
+		WHERE u.id = p.id_owner {$ConditionShowAdmin} {$ShowPlayerRecords}
+		GROUP BY p.{$resource[$element]} ORDER BY u.username ASC
+SQL;
+		$record = doquery($Qry, '', true);
+	}
+	else if(in_array($element, $reslist['tech']))
+	{
+		$ShowAdminRecords = SHOW_ADMIN_IN_RECORDS == 0 ? "WHERE authlevel ='0' " : "WHERE authlevel <='3'";
+
+		$record = doquery(sprintf(
+		'SELECT IF(COUNT(u.username)<=3,GROUP_CONCAT(DISTINCT u.username ORDER BY u.username DESC SEPARATOR ", "),"Plus de 3 joueurs ont ce record") AS players, u.%1$s AS level ' .
+		'FROM {{table}}users AS u ' .
+		'%2$s AND u.%1$s=(SELECT MAX(u2.%1$s) FROM {{table}}users AS u2 %2$s %3$s) AND u.%1$s>0 %3$s GROUP BY u.%1$s ORDER BY u.username ASC', $resource[$element], $ShowAdminRecords,$ShowPlayerRecords), '', true);
+	}
+	else
+	{
+		continue;
+	}
+
 
             $data['element'] = $elementName;
             $data['winner'] = !empty($record['players']) ? $record['players'] : '-';
@@ -128,8 +134,15 @@ if(!file_exists($cacheFile) || (time() - filemtime($cacheFile)) > $timeDelay)
         }
     }
 
-    $page = parsetemplate($recordTpl, $parse);
-    display($page, $lang['rec_title']);
+	if(SHOW_RECORDS == 1)
+	{
+		$page = parsetemplate($recordTpl, $parse);
+		display($page, $lang['rec_title']);
+	}
+	else
+	{
+		message($lang['bloqued_record'],$lang['rec_title'] );
+	}
 
     $data = ob_get_contents();
     ob_end_flush();

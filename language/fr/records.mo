@@ -30,7 +30,7 @@
 
 
 //Record
-$lang['rec_title']  = "Records de l'univers";
+$lang['rec_title']  = "<center>Records de l'univers</center>";
 $lang['rec_build']  = "B&acirc;timents";
 $lang['rec_specb']  = "B&acirc;timents sp&eacute;ciaux";
 $lang['rec_playe']  = "Joueur";
@@ -40,5 +40,6 @@ $lang['rec_techn']  = "Technologies";
 $lang['rec_level']  = "Niveau";
 $lang['rec_nbre']   = "Nombre";
 $lang['rec_rien']   = "-";
+$lang['bloqued_record'] = "la page record est momentanement bloqué";
 
 ?>
