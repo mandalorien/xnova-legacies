@@ -33,7 +33,8 @@ define('INSTALL' , false);
 require_once dirname(__FILE__) .'/common.php';
 
 	includeLang('stat');
-
+	$adminstat  = doquery("SELECT * FROM {{table}} WHERE `authlevel` >= '2';", 'users');
+	
 	$parse = $lang;
 	$who   = (isset($_POST['who']))   ? $_POST['who']   : $_GET['who'];
 	if (!isset($who)) {
@@ -48,14 +49,14 @@ require_once dirname(__FILE__) .'/common.php';
 		$range = 1;
 	}
 
-	$parse['who']    = "<option value=\"1\"". (($who == "1") ? " SELECTED" : "") .">". $lang['stat_player'] ."</option>";
-	$parse['who']   .= "<option value=\"2\"". (($who == "2") ? " SELECTED" : "") .">". $lang['stat_allys']  ."</option>";
+	$parse['who']    = "<option value=\"1\"". (($who == "1") ? " SELECTED" : "") .">". ucfirst($lang['stat_player'])."</option>";
+	$parse['who']   .= "<option value=\"2\"". (($who == "2") ? " SELECTED" : "") .">". ucfirst($lang['stat_allys'])."</option>";
 
-	$parse['type']   = "<option value=\"1\"". (($type == "1") ? " SELECTED" : "") .">". $lang['stat_main']     ."</option>";
-	$parse['type']  .= "<option value=\"2\"". (($type == "2") ? " SELECTED" : "") .">". $lang['stat_fleet']    ."</option>";
-	$parse['type']  .= "<option value=\"3\"". (($type == "3") ? " SELECTED" : "") .">". $lang['stat_research'] ."</option>";
-	$parse['type']  .= "<option value=\"4\"". (($type == "4") ? " SELECTED" : "") .">". $lang['stat_building'] ."</option>";
-	$parse['type']  .= "<option value=\"5\"". (($type == "5") ? " SELECTED" : "") .">". $lang['stat_defenses'] ."</option>";
+	$parse['type']   = "<option value=\"1\"". (($type == "1") ? " SELECTED" : "") .">". ucfirst($lang['stat_main'])."</option>";
+	$parse['type']  .= "<option value=\"2\"". (($type == "2") ? " SELECTED" : "") .">". ucfirst($lang['stat_fleet'])."</option>";
+	$parse['type']  .= "<option value=\"3\"". (($type == "3") ? " SELECTED" : "") .">". ucfirst($lang['stat_research'])."</option>";
+	$parse['type']  .= "<option value=\"4\"". (($type == "4") ? " SELECTED" : "") .">". ucfirst($lang['stat_building'])."</option>";
+	$parse['type']  .= "<option value=\"5\"". (($type == "5") ? " SELECTED" : "") .">". ucfirst($lang['stat_defenses'])."</option>";
 
 	if       ($type == 1) {
 		$Order   = "total_points";
@@ -70,7 +71,7 @@ require_once dirname(__FILE__) .'/common.php';
 		$Rank    = "fleet_rank";
 		$OldRank = "fleet_old_rank";
 	} elseif ($type == 3) {
-		$Order   = "tech_count";
+		$Order   = "tech_points";
 		$Points  = "tech_points";
 		$Counts  = "tech_count";
 		$Rank    = "tech_rank";
@@ -151,14 +152,21 @@ require_once dirname(__FILE__) .'/common.php';
 		for ($Page = 0; $Page <= $LastPage; $Page++) {
 			$PageValue      = ($Page * 100) + 1;
 			$PageRange      = $PageValue + 99;
-			$parse['range'] .= "<option value=\"". $PageValue ."\"". (($start == $PageValue) ? " SELECTED" : "") .">". $PageValue ."-". $PageRange ."</option>";
+			$parse['range'] .= "<option value=\"". $PageValue ."\"". (($range == $PageValue) ? " SELECTED" : "") .">". $PageValue ."-". $PageRange ."</option>";
 		}
 
 		$parse['stat_header'] = parsetemplate(gettemplate('stat_playertable_header'), $parse);
 
 		$start = floor($range / 100 % 100) * 100;
-		$query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ORDER BY `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
+		// $query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ORDER BY `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
+$retraitAdmin = "";
+		while ($admins = mysql_fetch_array($adminstat)){
+				$retraitAdmin .= " AND `id_owner` !='".$admins['id']."' ";
+				}
+				$query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ".$retraitAdmin." ORDER BY  `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
 
+
+				
 		$start++;
 		$parse['stat_date']   = $game_config['stats'];
 		$parse['stat_values'] = "";
@@ -194,7 +202,7 @@ require_once dirname(__FILE__) .'/common.php';
 			} else {
 				$parse['player_name']     = $UsrRow['username'];
 			}
-			$parse['player_mes']      = "<a href=\"messages.php?mode=write&id=" . $UsrRow['id'] . "\"><img src=\"" . $dpath . "img/m.gif\" border=\"0\" alt=\"". $lang['Ecrire'] ."\" /></a>";
+			$parse['player_mes']      = "<a href=\"messages.php?mode=write&id=" . $UsrRow['id'] . "\"><img src=\"" . $dpath . "img/m.gif\" border=\"0\" alt=\"". ucfirst($lang['Ecrire'])."\" /></a>";
 			if ($UsrRow['ally_name'] == $user['ally_name']) {
 				$parse['player_alliance'] = "<font color=\"#33CCFF\">".$UsrRow['ally_name']."</font>";
 			} else {
@@ -209,6 +217,7 @@ require_once dirname(__FILE__) .'/common.php';
 	$page = parsetemplate( gettemplate('stat_body'), $parse );
 
 	display($page, $lang['stat_title']);
+	
 
 // -----------------------------------------------------------------------------------------------------------
 // History version
