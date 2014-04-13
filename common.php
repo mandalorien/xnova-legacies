@@ -41,6 +41,10 @@ $fragment = explode ("/",$RequestUrl);
 $var = count($fragment);
 unset($fragment[intval(0)]);
 unset($fragment[intval($var - 1)]);
+if (defined('IN_ADMIN'))
+{
+	unset($fragment[intval(2)]); # on enleve /admin/
+}
 $baseUrl = implode("/",$fragment);
 
 define("WEB_URL","http://".$_SERVER['HTTP_HOST'] ."/".$baseUrl."/");
@@ -117,11 +121,7 @@ while ($row = mysql_fetch_array($_fleets)) {
 unset($_fleets);
 
 include(ROOT_PATH . 'rak.'.PHPEXT);
-if (!defined('IN_ADMIN')) {
-    $dpath = (isset($user['dpath']) && !empty($user["dpath"])) ? $user['dpath'] : DEFAULT_SKINPATH;
-} else {
-    $dpath = '../' . DEFAULT_SKINPATH;
-}
+$dpath = DEFAULT_SKINPATH;
 
 
 SetSelectedPlanet($user);
