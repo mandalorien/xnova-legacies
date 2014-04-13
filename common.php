@@ -36,6 +36,15 @@ define('PHPEXT', require 'extension.inc');
 
 define('VERSION', '2009.1');
 
+$RequestUrl = substr($_SERVER['REQUEST_URI'], 0);
+$fragment = explode ("/",$RequestUrl);
+$var = count($fragment);
+unset($fragment[intval(0)]);
+unset($fragment[intval($var - 1)]);
+$baseUrl = implode("/",$fragment);
+
+define("WEB_URL","http://".$_SERVER['HTTP_HOST'] ."/".$baseUrl."/");
+
 if (0 === filesize(ROOT_PATH . 'config.php') /*&& !defined('IN_INSTALL')*/) {
     header('Location: install/');
     die();
@@ -46,7 +55,7 @@ $user          = array();
 $lang          = array();
 $IsUserChecked = false;
 
-define('DEFAULT_SKINPATH', '/skins/xnova/');
+define('DEFAULT_SKINPATH',WEB_URL .'skins/xnova/');
 define('TEMPLATE_DIR', realpath(ROOT_PATH . '/templates/'));
 define('TEMPLATE_NAME', 'OpenGame');
 define('DEFAULT_LANG', 'fr');
