@@ -84,9 +84,9 @@ function BuildRessourcePage ( $CurrentUser, $CurrentPlanet ) {
 
 	// -------------------------------------------------------------------------------------------------------
 	// Mise a jour de l'espace de stockage
-	$CurrentPlanet['metal_max']     = (floor (BASE_STORAGE_SIZE * pow (1.5, $CurrentPlanet[ $resource[22] ] ))) * (1 + ($CurrentUser['rpg_stockeur'] * 0.5));
-	$CurrentPlanet['crystal_max']   = (floor (BASE_STORAGE_SIZE * pow (1.5, $CurrentPlanet[ $resource[23] ] ))) * (1 + ($CurrentUser['rpg_stockeur'] * 0.5));
-	$CurrentPlanet['deuterium_max'] = (floor (BASE_STORAGE_SIZE * pow (1.5, $CurrentPlanet[ $resource[24] ] ))) * (1 + ($CurrentUser['rpg_stockeur'] * 0.5));
+	$CurrentPlanet['metal_max']     = (floor (BASE_STORAGE_SIZE * pow (1.5, $CurrentPlanet[ $resource[22] ] ))) * (1 + ($CurrentUser['rpg_stockeur'] * 0.5))* MAX_OVERFLOW;
+	$CurrentPlanet['crystal_max']   = (floor (BASE_STORAGE_SIZE * pow (1.5, $CurrentPlanet[ $resource[23] ] ))) * (1 + ($CurrentUser['rpg_stockeur'] * 0.5))* MAX_OVERFLOW;
+	$CurrentPlanet['deuterium_max'] = (floor (BASE_STORAGE_SIZE * pow (1.5, $CurrentPlanet[ $resource[24] ] ))) * (1 + ($CurrentUser['rpg_stockeur'] * 0.5))* MAX_OVERFLOW;
 
 	// -------------------------------------------------------------------------------------------------------
 	$parse['resource_row']               = "";
@@ -100,10 +100,22 @@ function BuildRessourcePage ( $CurrentUser, $CurrentPlanet ) {
 		if ($CurrentPlanet[$resource[$ProdID]] > 0 && isset($ProdGrid[$ProdID])) {
 			$BuildLevelFactor                    = $CurrentPlanet[ $resource[$ProdID]."_porcent" ];
 			$BuildLevel                          = $CurrentPlanet[ $resource[$ProdID] ];
-			$metal     = floor( eval ( $ProdGrid[$ProdID]['formule']['metal']     ) * ( $game_config['resource_multiplier'] ) * ( 1 + ( $CurrentUser['rpg_geologue']  * 0.05 ) ) );
-			$crystal   = floor( eval ( $ProdGrid[$ProdID]['formule']['crystal']   ) * ( $game_config['resource_multiplier'] ) * ( 1 + ( $CurrentUser['rpg_geologue']  * 0.05 ) ) );
-			$deuterium = floor( eval ( $ProdGrid[$ProdID]['formule']['deuterium'] ) * ( $game_config['resource_multiplier'] ) * ( 1 + ( $CurrentUser['rpg_geologue']  * 0.05 ) ) );
-			$energy    = floor( eval ( $ProdGrid[$ProdID]['formule']['energy']    ) * ( $game_config['resource_multiplier'] ) * ( 1 + ( $CurrentUser['rpg_ingenieur'] * 0.05 ) ) );
+				$metal     = (floor( eval ( $ProdGrid[$ProdID]['formule']['metal'] )     * (0.01 * $post_porcent) * ( $game_config['resource_multiplier'] )));
+				$crystal   = (floor( eval ( $ProdGrid[$ProdID]['formule']['crystal'] )   * (0.01 * $post_porcent) * ( $game_config['resource_multiplier'] )));
+				
+				if ($ProdID < 4)
+					{
+						$deuterium = (floor( eval ( $ProdGrid[$ProdID]['formule']['deuterium'] ) * (0.01 * $post_porcent) * ( $game_config['resource_multiplier'] )));
+						$energy   =  (floor( eval  ( $ProdGrid[$ProdID]['formule']['energy']) * ( $game_config['resource_multiplier']) * ( 1 + ( $CurrentUser['energy_tech'] * 0.01 ) )));
+					}
+					elseif ($ProdID >= 4 )
+					{
+						if($ProdID == 5 && $CurrentPlanet['deuterium'] == 0)
+							continue;
+
+						$deuterium = (floor( eval ( $ProdGrid[$ProdID]['formule']['deuterium'] ) * (0.01 * $post_porcent) * ( $game_config['resource_multiplier'] ) ));
+						$energy    =  (floor( eval  ( $ProdGrid[$ProdID]['formule']['energy']    ) * ( $game_config['resource_multiplier'] ) * ( 1 + ( $CurrentUser['energy_tech'] * 0.01 ) )));
+					}
 			if ($energy > 0) {
 				$CurrentPlanet['energy_max']    += $energy;
 			} else {
@@ -193,19 +205,19 @@ function BuildRessourcePage ( $CurrentUser, $CurrentPlanet ) {
 	$parse['metal_total']           = colorNumber( pretty_number( floor( ( $CurrentPlanet['metal_perhour']     * 0.01 * $parse['production_level'] ) + $parse['metal_basic_income'])));
 	$parse['crystal_total']         = colorNumber( pretty_number( floor( ( $CurrentPlanet['crystal_perhour']   * 0.01 * $parse['production_level'] ) + $parse['crystal_basic_income'])));
 	$parse['deuterium_total']       = colorNumber( pretty_number( floor( ( $CurrentPlanet['deuterium_perhour'] * 0.01 * $parse['production_level'] ) + $parse['deuterium_basic_income'])));
-	$parse['energy_total']          = colorNumber( pretty_number( floor( ( $CurrentPlanet['energy_max'] + $parse['energy_basic_income']    ) + $CurrentPlanet['energy_used'] ) ) );
+	$parse['energy_total']          = colorNumber( pretty_number( floor( ( $CurrentPlanet['energy_max'] + $parse['energy_basic_income']    ) + $CurrentPlanet['energy_used'] )));
 
-	$parse['daily_metal']           = floor($CurrentPlanet['metal_perhour']     * 24      * 0.01 * $parse['production_level'] + $parse['metal_basic_income']     * 24      );
-	$parse['weekly_metal']          = floor($CurrentPlanet['metal_perhour']     * 24 * 7  * 0.01 * $parse['production_level'] + $parse['metal_basic_income']     * 24 * 7  );
-	$parse['monthly_metal']         = floor($CurrentPlanet['metal_perhour']     * 24 * 30 * 0.01 * $parse['production_level'] + $parse['metal_basic_income']     * 24 * 30 );
+	$parse['daily_metal']           = floor($CurrentPlanet['metal_perhour']* 24      * 0.01 * $parse['production_level'] + $parse['metal_basic_income']* 24      );
+	$parse['weekly_metal']          = floor($CurrentPlanet['metal_perhour']* 24 * 7  * 0.01 * $parse['production_level'] + $parse['metal_basic_income'] * 24 * 7  );
+	$parse['monthly_metal']         = floor($CurrentPlanet['metal_perhour']* 24 * 30 * 0.01 * $parse['production_level'] + $parse['metal_basic_income']* 24 * 30 );
 
-	$parse['daily_crystal']         = floor($CurrentPlanet['crystal_perhour']   * 24      * 0.01 * $parse['production_level'] + $parse['crystal_basic_income']   * 24      );
-	$parse['weekly_crystal']        = floor($CurrentPlanet['crystal_perhour']   * 24 * 7  * 0.01 * $parse['production_level'] + $parse['crystal_basic_income']   * 24 * 7  );
-	$parse['monthly_crystal']       = floor($CurrentPlanet['crystal_perhour']   * 24 * 30 * 0.01 * $parse['production_level'] + $parse['crystal_basic_income']   * 24 * 30 );
+	$parse['daily_crystal']         = floor($CurrentPlanet['crystal_perhour']* 24      * 0.01 * $parse['production_level'] + $parse['crystal_basic_income']  * 24      );
+	$parse['weekly_crystal']        = floor($CurrentPlanet['crystal_perhour']* 24 * 7  * 0.01 * $parse['production_level'] + $parse['crystal_basic_income']* 24 * 7  );
+	$parse['monthly_crystal']       = floor($CurrentPlanet['crystal_perhour']*24 * 30 * 0.01 * $parse['production_level'] + $parse['crystal_basic_income']* 24 * 30 );
 
-	$parse['daily_deuterium']       = floor($CurrentPlanet['deuterium_perhour'] * 24      * 0.01 * $parse['production_level'] + $parse['deuterium_basic_income'] * 24      );
-	$parse['weekly_deuterium']      = floor($CurrentPlanet['deuterium_perhour'] * 24 * 7  * 0.01 * $parse['production_level'] + $parse['deuterium_basic_income'] * 24 * 7  );
-	$parse['monthly_deuterium']     = floor($CurrentPlanet['deuterium_perhour'] * 24 * 30 * 0.01 * $parse['production_level'] + $parse['deuterium_basic_income'] * 24 * 30 );
+	$parse['daily_deuterium']       = floor($CurrentPlanet['deuterium_perhour']* 24      * 0.01 * $parse['production_level'] + $parse['deuterium_basic_income']* 60);
+	$parse['weekly_deuterium']      = floor($CurrentPlanet['deuterium_perhour']* 24 * 7  * 0.01 * $parse['production_level'] + $parse['deuterium_basic_income']* 24 * 7  );
+	$parse['monthly_deuterium']     = floor($CurrentPlanet['deuterium_perhour']* 24 * 30 * 0.01 * $parse['production_level'] + $parse['deuterium_basic_income']* 24 * 30 );
 
 	$parse['daily_metal']           = colorNumber(pretty_number($parse['daily_metal']));
 	$parse['weekly_metal']          = colorNumber(pretty_number($parse['weekly_metal']));
@@ -218,7 +230,7 @@ function BuildRessourcePage ( $CurrentUser, $CurrentPlanet ) {
 	$parse['daily_deuterium']       = colorNumber(pretty_number($parse['daily_deuterium']));
 	$parse['weekly_deuterium']      = colorNumber(pretty_number($parse['weekly_deuterium']));
 	$parse['monthly_deuterium']     = colorNumber(pretty_number($parse['monthly_deuterium']));
-
+	
 	$parse['metal_storage']         = floor($CurrentPlanet['metal']     / $CurrentPlanet['metal_max']     * 100) . $lang['o/o'];
 	$parse['crystal_storage']       = floor($CurrentPlanet['crystal']   / $CurrentPlanet['crystal_max']   * 100) . $lang['o/o'];
 	$parse['deuterium_storage']     = floor($CurrentPlanet['deuterium'] / $CurrentPlanet['deuterium_max'] * 100) . $lang['o/o'];
