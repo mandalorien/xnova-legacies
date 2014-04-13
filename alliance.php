@@ -29,38 +29,48 @@
  */
 
 define('INSTALL' , false);
+define('INSIDE' , true);
+require_once dirname(__FILE__) .'/common.php';
 
+$_GET['mode'] = isset($_GET['mode']) ? $_GET['mode'] : '';
 $mode = $_GET['mode'];
 if (empty($mode))   { unset($mode); }
+$_GET['a'] = isset($_GET['a']) ? $_GET['a'] : '';
 $a     = intval($_GET['a']);
 if (empty($a))      { unset($a); }
+$_GET['sort1'] = isset($_GET['sort1']) ? $_GET['sort1'] : '';
 $sort1 = intval($_GET['sort1']);
 if (empty($sort1))  { unset($sort1); }
+$_GET['sort2'] = isset($_GET['sort2']) ? $_GET['sort2'] : '';
 $sort2 = intval($_GET['sort2']);
 if (empty($sort2))  { unset($sort2); }
+$_GET['d'] = isset($_GET['d']) ? $_GET['d'] : '';
 $d = $_GET['d'];
+
 if ((!is_numeric($d)) || (empty($d) && $d != 0))
 	unset($d);
 
+$_GET['edit'] = isset($_GET['edit']) ? $_GET['edit'] : '';
 $edit = $_GET['edit'];
 
 if (empty($edit))
 	unset($edit);
 
+$_GET['rank'] = isset($_GET['rank']) ? $_GET['rank'] : '';
 $rank = intval($_GET['rank']);
 if (empty($rank))
 	unset($rank);
 
+$_GET['kick'] = isset($_GET['kick']) ? $_GET['kick'] : '';
 $kick = intval($_GET['kick']);
 if (empty($kick))
 	unset($kick);
-
+	
+$_GET['id'] = isset($_GET['id']) ? $_GET['id'] : '';
 $id = intval($_GET['id']);
 if (empty($id))
 	unset($id);
 
-define('INSIDE' , true);
-require_once dirname(__FILE__) .'/common.php';
 
 
 if(empty($user['id'])){
@@ -70,8 +80,18 @@ echo '</script>';
 }
 
 $mode     = $_GET['mode'];
+$_GET['yes'] = isset($_GET['yes']) ? $_GET['yes'] : '';
+$_GET['allyid'] = isset($_GET['allyid']) ? $_GET['allyid'] : '';
+$_GET['show'] = isset($_GET['show']) ? $_GET['show'] : '';
+$_GET['sort'] = isset($_GET['sort']) ? $_GET['sort'] : '';
+$_GET['sendmail'] = isset($_GET['sendmail']) ? $_GET['sendmail'] : '';
+$_GET['t'] = isset($_GET['t']) ? $_GET['t'] : '';
+$_GET['tag'] = isset($_GET['tag']) ? $_GET['tag'] : '';
+
+
 $yes      = $_GET['yes'];
 $edit     = $_GET['edit'];
+$stock     = $_GET['stock'];
 $allyid   = intval($_GET['allyid']);
 $show     = intval($_GET['show']);
 $sort     = intval($_GET['sort']);
@@ -443,11 +463,11 @@ elseif ($user['ally_id'] != 0 && $user['ally_request'] == 0) { // Con alianza
 			} else $u["onlinetime"] = "orange>-<";
 			// Nombre de rango
 			if ($ally['ally_owner'] == $u['id']) {
-				$u["ally_range"] = ($ally['ally_owner_range'] == '')?"Leader":$ally['ally_owner_range'];
-			} elseif (isset($allianz_raenge[$u['ally_rank_id']]['name'])) {
-				$u["ally_range"] = $allianz_raenge[$u['ally_rank_id']]['name'];
-			} else {
+				$u["ally_range"] = ($ally['ally_owner_range'] == '')?$lang['Founder']:$ally['ally_owner_range'];
+			} elseif ($u['ally_rank_id'] == 0 || !isset($ally_ranks[$u['ally_rank_id']-1]['name'])) {
 				$u["ally_range"] = $lang['Novate'];
+			} else {
+				$u["ally_range"] = $ally_ranks[$u['ally_rank_id']-1]['name'];
 			}
 
 			$u["dpath"]  = $dpath;
