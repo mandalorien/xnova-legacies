@@ -59,7 +59,7 @@ function ModuleMarchand ( $CurrentUser, &$CurrentPlanet ) {
 			$CheatTry   = true;
 		}
 		if ($CheatTry  == false) {
-			switch ($_POST['ress']) {
+			switch($_POST['ress']) {
 				case 'metal':
 					$Necessaire   = (( $Crystal * 2) + ( $Deuterium * 4));
 					if ($CurrentPlanet['metal'] > $Necessaire) {
@@ -88,6 +88,9 @@ function ModuleMarchand ( $CurrentUser, &$CurrentPlanet ) {
 						$Message = $lang['mod_ma_noten'] ." ". $lang['Deuterium'] ."! ";
 						$Error   = true;
 					}
+					break;
+					default :
+						$PageTPL = gettemplate('marchand_main');
 					break;
 			}
 		}
@@ -125,19 +128,22 @@ function ModuleMarchand ( $CurrentUser, &$CurrentPlanet ) {
 			switch ($_POST['choix']) {
 				case 'metal':
 					$PageTPL = gettemplate('marchand_metal');
-					$parse['mod_ma_res_a'] = "2";
 					$parse['mod_ma_res_b'] = "4";
+					$parse['mod_ma_res_a'] = "2";
 					break;
 				case 'cristal':
 					$PageTPL = gettemplate('marchand_cristal');
-					$parse['mod_ma_res_a'] = "0.5";
 					$parse['mod_ma_res_b'] = "2";
+					$parse['mod_ma_res_a'] = "0.5";
 					break;
-				case 'deut':
+				case 'deuterium':
 					$PageTPL = gettemplate('marchand_deuterium');
-					$parse['mod_ma_res_a'] = "0.25";
 					$parse['mod_ma_res_b'] = "0.5";
+					$parse['mod_ma_res_a'] = "0.25";
 					break;
+				default :
+						$PageTPL = gettemplate('marchand_main');
+				break;
 			}
 		}
 	}
