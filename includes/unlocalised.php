@@ -90,7 +90,7 @@ function GetFleetMaxSpeed ($FleetArray, $Fleet, $Player) {
                 $speedalls[$Ship] = $pricelist[$Ship]['speed']  + (($pricelist[$Ship]['speed'] * $Player['impulse_motor_tech']) * 0.2);
             }
         }
-        if ($Ship == 207 or $Ship == 213 or $Ship == 214 or $Ship == 215 or $Ship == 216) {
+        if ($Ship == 207 or $Ship == 213 or $Ship == 214 or $Ship == 215) {
             $speedalls[$Ship] = $pricelist[$Ship]['speed'] + (($pricelist[$Ship]['speed'] * $Player['hyperspace_motor_tech']) * 0.3);
         }
     }

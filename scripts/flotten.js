@@ -151,8 +151,7 @@ function consumption() {
 			//spd = Math.min(spd, 1.0);
 			//spd = spd * sp;
 			//spd = 10;
-			basicConsumption = document.getElementsByName("consumption" + i)[0].value
-			* document.getElementsByName("ship" + i)[0].value;
+			basicConsumption = document.getElementsByName("consumption" + i)[0].value * document.getElementsByName("ship" + i)[0].value;
 			consumption += basicConsumption * dist / 35000 * ((spd / 10) + 1) * ((spd / 10) + 1);
 			//      values = values + " " + spd;
 		}
