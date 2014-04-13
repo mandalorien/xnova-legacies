@@ -59,18 +59,27 @@ function ResearchBuildingPage (&$CurrentPlanet, $CurrentUser, $InResearch, $TheP
 				}
 				switch($TheCommand){
 					case 'cancel':
-						if ($ThePlanet['b_tech_id'] == $Techno) {
+                        if ($ThePlanet['b_tech_id'] == $Techno)
+						{
 							$costs                        = GetBuildingPrice($CurrentUser, $WorkingPlanet, $Techno);
 							$WorkingPlanet['metal']      += $costs['metal'];
 							$WorkingPlanet['crystal']    += $costs['crystal'];
 							$WorkingPlanet['deuterium']  += $costs['deuterium'];
-							$WorkingPlanet['b_tech_id']   = 0;
-							$WorkingPlanet["b_tech"]      = 0;
-							$CurrentUser['b_tech_planet'] = 0;
-							$UpdateData                   = true;
-							$InResearch                   = false;
-						}
-						break;
+
+							if( $WorkingPlanet['id'] == $CurrentPlanet['id'] )
+							{
+								$CurrentPlanet['metal']      += $costs['metal'];
+								$CurrentPlanet['crystal']    += $costs['crystal'];
+								$CurrentPlanet['deuterium']  += $costs['deuterium'];
+							}
+                            
+                            $WorkingPlanet['b_tech_id']   = 0;
+                            $WorkingPlanet["b_tech"]      = 0;
+                            $CurrentUser['b_tech_planet'] = 0;
+                            $UpdateData                   = true;
+                            $InResearch                   = false;
+                        }
+                        break;
 					case 'search':
 						if ( IsTechnologieAccessible($CurrentUser, $WorkingPlanet, $Techno) &&
 							 IsElementBuyable($CurrentUser, $WorkingPlanet, $Techno) ) {
