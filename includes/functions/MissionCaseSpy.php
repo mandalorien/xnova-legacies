@@ -29,7 +29,7 @@
  */
 
 function MissionCaseSpy ( $FleetRow ) {
-	global $lang, $resource;
+	global $lang, $resource,$reslist;
 
 	if ($FleetRow['fleet_start_time'] <= time()) {
 		$CurrentUser         = doquery("SELECT * FROM {{table}} WHERE `id` = '".$FleetRow['fleet_owner']."';", 'users', true);
@@ -86,17 +86,41 @@ function MissionCaseSpy ( $FleetRow ) {
 						$TargetTechnos    = $PlanetBuildings;
 						$TargetTechnos   .= $TargetTechnInfo['String'];
 
-						$TargetForce      = ($PlanetFleetInfo['Count'] * $LS) / 4;
+						# probabilité de destruction de la flotte 
+						if($CurrentSpyLvl > $TargetSpyLvl)
+						{
+							$dproba = 0.25 / (($TargetSpyLvl - $CurrentSpyLvl) * -1 * 2);
+						}
+						elseif($TargetSpyLvl > $CurrentSpyLvl)
+						{
+							$dproba = 0.25 / (($TargetSpyLvl - $CurrentSpyLvl) * 2);
+						}
+						
+						# nombre de vaisseaux adverse (peu importe le type)
+						foreach($resource as $Rid=>$type)
+						{
+							if(in_array($Rid,$reslist['fleet']))
+							{
+								$numbership += $TargetPlanet[$type];
+							}
+						}
+						
+						$TargetForce = ((($dproba) / 4)* $numbership)*100;
 
 						if ($TargetForce > 100) {
 							$TargetForce = 100;
 						}
+						
 						$TargetChances = rand(0, $TargetForce);
 						$SpyerChances  = rand(0, 100);
-						if ($TargetChances >= $SpyerChances) {
+						if ($TargetChances <= $SpyerChances) {
 							$DestProba = sprintf( $lang['sys_mess_spy_lostproba'], $TargetChances);
-						} elseif ($TargetChances < $SpyerChances) {
-							$DestProba = "<font color=\"red\">".$lang['sys_mess_spy_destroyed']."</font>";
+						} elseif ($TargetChances > $SpyerChances && intval($TargetChances)<= 85) {
+							$DestProba = sprintf( $lang['sys_mess_spy_lostproba'], $TargetChances);
+						}
+						elseif($TargetChances > $SpyerChances && intval($TargetChances)> 85)
+						{
+							$DestProba = sprintf( $lang['sys_mess_spy_lostproba'], "100")."<br /><font color=\"red\">".$lang['sys_mess_spy_destroyed']."</font>";
 						}
 						$AttackLink = "<center>";
 						$AttackLink .= "<a href=\"fleet.php?galaxy=". $FleetRow['fleet_end_galaxy'] ."&system=". $FleetRow['fleet_end_system'] ."";
@@ -146,13 +170,13 @@ function MissionCaseSpy ( $FleetRow ) {
 						SendSimpleMessage ( $TargetUserID, '', $FleetRow['fleet_start_time'], 0, $lang['sys_mess_spy_control'], $lang['sys_mess_spy_activity'], $TargetMessage);
 
 					}
-					if ($TargetChances >= $SpyerChances) {
+					if ($TargetChances > $SpyerChances && intval($TargetChances)> 85) {
 						$QryUpdateGalaxy  = "UPDATE {{table}} SET ";
 						$QryUpdateGalaxy .= "`crystal` = `crystal` + '". (0 + $SpyToolDebris) ."' ";
 						$QryUpdateGalaxy .= "WHERE `id_planet` = '". $TargetPlanet['id'] ."';";
 						doquery( $QryUpdateGalaxy, 'galaxy');
 
-						doquery("DELETE FROM {{table}} WHERE `fleet_id` = '". $FleetRow["fleet_id"] ."';", 'fleets');
+						doquery("DELETE FROM {{table}} WHERE `fleet_id` = ". $FleetRow["fleet_id"], 'fleets');
 					} else {
 						doquery("UPDATE {{table}} SET `fleet_mess` = '1' WHERE `fleet_id` = '". $FleetRow["fleet_id"] ."';", 'fleets');
 					}
