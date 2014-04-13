@@ -2,6 +2,7 @@
 <center>
 <table width="300">
 <form action="" method="get">
+	<input type="hidden" name="s" value="{csrf_hack}" />
 	<tr>
 	  <td class="c" colspan="6">{adm_mod_level}</td>
 	</tr>
