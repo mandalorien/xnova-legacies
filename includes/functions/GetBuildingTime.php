@@ -53,13 +53,23 @@ function GetBuildingTime ($user, $planet, $Element) {
 				$techlevel[$NbLabs] = $colonie[$resource['31']];
 				$NbLabs++;
 			}
-			if ($intergal_lab >= "1") {
-				$lablevel = 0;
-				for ($lab = 1; $lab <= $intergal_lab; $lab++) {
-					asort($techlevel);
-					$lablevel += $techlevel[$lab - 1];
-				}
-			}
+				if ( $intergal_lab < 1 )
+							$lablevel = $planet[$resource[31]];
+						else
+						{
+							$Lvl_Required_Lab = $requeriments[$Element][31];
+							$Nbre_Lab_Associate = $intergal_lab + 1;
+
+							$QrySumLvlLab = <<<SQL
+				SELECT SUM(`{$resource[31]}`) AS `somme` 
+				FROM {{table}} 
+				WHERE `{$resource[31]}` >= '{$Lvl_Required_Lab}' AND `id_owner` = '{$user['id']}' 
+				ORDER BY `{$resource[31]}` DESC 
+				LIMIT 0, {$Nbre_Lab_Associate}
+SQL;
+							$Sum_Lvl_Lab = doquery($QrySumLvlLab, 'planets', true);
+							$lablevel = $Sum_Lvl_Lab['somme'];
+						}
 		}
 		$time         = (($cost_metal + $cost_crystal) / $game_config['game_speed']) / (($lablevel + 1) * 2);
 		$time         = floor(($time * 60 * 60) * (1 - (($user['rpg_scientifique']) * 0.1)));
