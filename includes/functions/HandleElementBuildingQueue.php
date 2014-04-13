@@ -21,42 +21,73 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *                                --> NOTICE <--
+ *                                --//NOTICE <--
  *  This file is part of the core development branch, changing its contents will
  * make you unable to use the automatic updates manager. Please refer to the
  * documentation for further information about customizing XNova.
  *
  */
 
-function HandleElementBuildingQueue($currentUser, &$currentPlanet, $productionTime) {
-    global $resource;
-    // Pendant qu'on y est, si on verifiait ce qui se passe dans la queue de construction du chantier ?
-    if ($currentPlanet['b_hangar_id']) {
-        $buildArray = array();
-        $currentPlanet['b_hangar'] += $productionTime;
+   function HandleElementBuildingQueue ( $CurrentUser, &$CurrentPlanet, $ProductionTime )
+    {
+        global $resource;
 
-        $buildQueue = explode(';', $currentPlanet['b_hangar_id']);
+        if ($CurrentPlanet['b_hangar_id'] != 0)
+        {
+            $Builded                    = array ();
+            $CurrentPlanet['b_hangar'] += $ProductionTime;
+            $BuildQueue                 = explode(';', $CurrentPlanet['b_hangar_id']);
+            $BuildArray                    = array();
 
-        $currentPlanet['b_hangar_id'] = '';
-        foreach ($buildQueue as $element) {
-            if (empty($element) || !($element = explode(',', $element)) || count($element) != 2) {
-                continue;
+            foreach ($BuildQueue as $Node => $Array)
+            {
+                if ($Array != '')
+                {
+                    $Item              = explode(',', $Array);
+                    $AcumTime           = GetBuildingTime ($CurrentUser, $CurrentPlanet, $Item[0]);
+                    $BuildArray[$Node] = array($Item[0], $Item[1], $AcumTime);
+                }
             }
-            list($item, $count) = $element;
-            $buildTime = GetBuildingTime($currentUser, $currentPlanet, $item);
 
-            if($currentPlanet['b_hangar'] >= $buildTime && $count > 0) {
-                $currentPlanet['b_hangar'] -= $buildTime * $count;
-                $buildArray[$element] += $count;
-                $currentPlanet[$resource[$element]] += $count;
-
-                $currentPlanet['b_hangar_id'] .= "$element,$Count;";
-            }
+            $CurrentPlanet['b_hangar_id']     = '';
+            $UnFinished                     = false;
+                    foreach ( $BuildArray as $Node => $Item ){
+                        $Element   = $Item[0];
+                        $Count     = $Item[1];
+                        $BuildTime = $Item[2];
+                        $Builded[$Element] = 0;
+                        if (!$UnFinished and $BuildTime > 0){
+                            $AllTime = $BuildTime * $Count;
+                            if($CurrentPlanet['b_hangar'] >= $BuildTime){
+                                $Done = min($Count, floor( $CurrentPlanet['b_hangar'] / $BuildTime));
+                                if($Count > $Done){
+                                    $CurrentPlanet['b_hangar'] -= $BuildTime * $Done;                                
+                                    $UnFinished = true;    
+                                    $Count -= $Done;                                                        
+                                }else{
+                                    $CurrentPlanet['b_hangar'] -= $AllTime;                                        
+                                    $Count = 0;
+                                }
+                                $Builded[$Element] += $Done;
+                                $CurrentPlanet[$resource[$Element]] += $Done;
+                            }else{
+                                $UnFinished = true;    
+                            }
+                        }elseif(!$UnFinished){    
+                                $Builded[$Element] += $Count;
+                                $CurrentPlanet[$resource[$Element]] += $Count;                                
+                                $Count = 0;                            
+                        }
+                        if ( $Count != 0 ){
+                            $CurrentPlanet['b_hangar_id'] .= $Element.",".$Count.";";
+                        }
+                    }
         }
-    } else {
-        $buildArray = array();
-        $currentPlanet['b_hangar'] = 0;
-    }
+        else
+        {
+            $Builded                   = '';
+            $CurrentPlanet['b_hangar'] = 0;
+        }
 
-    return $buildArray;
-}
+        return $Builded;
+    }
