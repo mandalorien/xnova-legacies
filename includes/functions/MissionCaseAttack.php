@@ -306,20 +306,20 @@ function MissionCaseAttack ($FleetRow)
                 }
             }
             switch ($FleetResult) {
-                case "a":
+                case "a": # l'attaquant a gagner
                     $Pillage = sprintf ($lang['sys_stealed_ressources'], pretty_number ($Mining['metal']), $lang['metal'], pretty_number ($Mining['crystal']), $lang['crystal'], pretty_number ($Mining['deuter']), $lang['Deuterium']);
                     $raport .= $lang['sys_attacker_won'] . "<br />" . $Pillage . "<br />";
                     $raport .= $DebrisField . "<br />";
                     $raport .= $ChanceMoon . "<br />";
                     $raport .= $GottenMoon . "<br />";
                     break;
-                case "r":
+                case "r": # match nul
                     $raport .= $lang['sys_both_won'] . "<br />";
                     $raport .= $DebrisField . "<br />";
                     $raport .= $ChanceMoon . "<br />";
                     $raport .= $GottenMoon . "<br />";
                     break;
-                case "w":
+                case "w": # le defenseur a gagner
                     $raport .= $lang['sys_defender_won'] . "<br />";
                     $raport .= $DebrisField . "<br />";
                     $raport .= $ChanceMoon . "<br />";
@@ -384,7 +384,8 @@ function MissionCaseAttack ($FleetRow)
             doquery($QryUpdateOfficier, 'users');
             // Ajout d'un point au compteur de raids
             $RaidsTotal = $CurrentUser['raids'] + 1;
-            if ($FleetResult == "a") {
+			if ($FleetResult == "a") //gagner
+			{
                 $RaidsWin = $CurrentUser['raidswin'] + 1;
                 $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
                 $QryUpdateRaidsCompteur .= "`raidswin` ='" . $RaidsWin . "', ";
@@ -392,23 +393,35 @@ function MissionCaseAttack ($FleetRow)
                 $QryUpdateRaidsCompteur .= "WHERE id = '" . $CurrentUserID . "' ";
                 $QryUpdateRaidsCompteur .= "LIMIT 1 ;";
                 doquery($QryUpdateRaidsCompteur, 'users');
-            } elseif ($FleetResult == "r" || $FleetResult == "w") {
+            } 
+			elseif ($FleetResult == "r") //match nul
+			{
                 $RaidsLoose = $CurrentUser['raidsloose'] + 1;
                 $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
-                $QryUpdateRaidsCompteur .= "`raidswin` ='" . $RaidsLoose . "', ";
+                $QryUpdateRaidsCompteur .= "`raidsloose` ='" . $RaidsLoose . "', ";
                 $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
                 $QryUpdateRaidsCompteur .= "WHERE id = '" . $CurrentUserID . "' ";
                 $QryUpdateRaidsCompteur .= "LIMIT 1 ;";
                 doquery($QryUpdateRaidsCompteur, 'users');
             }
-            // Colorisation du résumé de rapport pour l'attaquant
+			elseif ($FleetResult == "w") //perdu
+			{
+                $RaidsLoose = $CurrentUser['raidsloose'] + 1;
+                $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
+                $QryUpdateRaidsCompteur .= "`raidsloose` ='" . $RaidsLoose . "', ";
+                $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
+                $QryUpdateRaidsCompteur .= "WHERE id = '" . $CurrentUserID . "' ";
+                $QryUpdateRaidsCompteur .= "LIMIT 1 ;";
+                doquery($QryUpdateRaidsCompteur, 'users');
+            }
+            // Colorisation du résumé de rapport pour le defenseur
             $raport2 = "<a href # OnClick=\"f( 'rw.php?raport=" . $rid . "', '');\" >";
             $raport2 .= "<center>";
-            if ($FleetResult == "a") {
+            if ($FleetResult == "w") {
                 $raport2 .= "<font color=\"green\">";
             } elseif ($FleetResult == "r") {
                 $raport2 .= "<font color=\"orange\">";
-            } elseif ($FleetResult == "w") {
+            } elseif ($FleetResult == "a") {
                 $raport2 .= "<font color=\"red\">";
             }
             $raport2 .= $lang['sys_mess_attack_report'] . " [" . $FleetRow['fleet_end_galaxy'] . ":" . $FleetRow['fleet_end_system'] . ":" . $FleetRow['fleet_end_planet'] . "] </font></a><br /><br />";
