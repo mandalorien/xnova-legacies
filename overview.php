@@ -365,6 +365,7 @@ switch ($mode) {
             $parse['user_points'] = pretty_number($StatRecord['build_points']);
             $parse['user_fleet'] = pretty_number($StatRecord['fleet_points']);
             $parse['player_points_tech'] = pretty_number($StatRecord['tech_points']);
+			$parse['player_points_def'] = pretty_number($StatRecord['defs_points']);
             $parse['total_points'] = pretty_number($StatRecord['total_points']);;
 
             $parse['user_rank'] = $StatRecord['total_rank'];
