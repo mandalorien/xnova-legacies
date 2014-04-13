@@ -1,40 +1,39 @@
 <?php
+
 /**
- * Tis file is part of XNova:Legacies
+ * logout.php
  *
- * @license http://www.gnu.org/licenses/gpl-3.0.txt
- * @see http://www.xnova-ng.org/
- *
- * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
- * All rights reserved.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *                                --> NOTICE <--
- *  This file is part of the core development branch, changing its contents will
- * make you unable to use the automatic updates manager. Please refer to the
- * documentation for further information about customizing XNova.
- *
+ * @version 1.0
+ * @copyright 2008 by ?????? for XNova
  */
 
-define('INSIDE' , true);
+define('INSIDE'  , true);
 define('INSTALL' , false);
-require_once dirname(__FILE__) . '/common.php';
+require_once dirname(__FILE__) .'/common.php';
 
-includeLang('logout');
+    includeLang('logout');
+    
+    $parse = array();
+    $second = 5; // Nombre de secondes qui doivent s'écouler avant la redirection
+    
+    $parse['session_close'] = $lang['see_you'];
+    $parse['mes_session_close'] = $lang['session_closed'];
+    $parse['tps_seconds'] = $second; // On indique au script le nombre de secondes pour le compte à rebours
+    
+    setcookie($game_config['COOKIE_NAME'], "", time()-100000, "/", "", 0);
 
-session_destroy();
-setcookie('nova-cookie', NULL, 0);
+    $page = parsetemplate(gettemplate('logout'), $parse);
+    
+    header("Refresh: ".$second."; Url = login.php");
+    
+	display( $page, $lang['session_closed'],false);
 
-message($lang['see_you'], $lang['session_closed'], 'login.' . PHPEXT);
+
+// -----------------------------------------------------------------------------------------------------------
+// History version
+//
+// 1.0   : Version Originale de ?????? pour Xnova
+// 1.1   : Redirection et affichage d'un compte à rebours de Winjet
+// 1.11 : Ajout d'un lien pour effectuer la redirection tout de suite 
+//          et éviter d'attendre la fin du compte à rebours
+?>
