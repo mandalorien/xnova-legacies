@@ -69,11 +69,21 @@ function DefensesBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 				// Cas particulier (Petit Bouclier et Grand Bouclier
 				// ne peuvent exister qu'une seule et unique fois
 				$InQueue = strpos ( $CurrentPlanet['b_hangar_id'], $Element.",");
-				$IsBuild = ($CurrentPlanet[$resource[407]] >= 1) ? true : false;
-				if ($Element == 407 || $Element == 408) {
-					if ($InQueue === false && !$IsBuild) {
-                        $Count = 1;
-					}
+				$IsBuildp = ($CurrentPlanet[$resource[407]] >= 1) ? TRUE : FALSE;
+				$IsBuildg = ($CurrentPlanet[$resource[408]] >= 1) ? TRUE : FALSE;
+				$BuildIt = TRUE;
+				if ($Element == 407 || $Element == 408)
+				{
+					$BuildIt = false;
+
+					if ( $Element == 407 && !$IsBuildp && $InQueue === FALSE )
+						$BuildIt = TRUE;
+						$Count   = 1;
+
+					if ( $Element == 408 && !$IsBuildg && $InQueue === FALSE )
+						$BuildIt = TRUE;
+						$Count   = 1;
+
 				}
 
 				// On verifie si on a les technologies necessaires a la construction de l'element
@@ -169,15 +179,23 @@ function DefensesBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 				$maxElement = GetMaxConstructibleElements($Element, $CurrentPlanet);
                  if ($maxElement > MAX_FLEET_OR_DEFS_PER_ROW) $maxElement = MAX_FLEET_OR_DEFS_PER_ROW;
 				if ($CanBuildOne) {
-					$InQueue = strpos ( $CurrentPlanet['b_hangar_id'], $Element.",");
-					$IsBuild = ($CurrentPlanet[$resource[407]] >= 1) ? true : false;
-					$BuildIt = true;
-					if ($Element == 407 || $Element == 408) {
-                        $BuildIt = false;
-						if ( $InQueue === false && !$IsBuild) {
-							$BuildIt = true;
+						$InQueue = strpos ( $CurrentPlanet['b_hangar_id'], $Element.",");
+						$IsBuildp = ($CurrentPlanet[$resource[407]] >= 1) ? TRUE : FALSE;
+						$IsBuildg = ($CurrentPlanet[$resource[408]] >= 1) ? TRUE : FALSE;
+						$BuildIt = TRUE;
+						if ($Element == 407 || $Element == 408)
+						{
+							$BuildIt = false;
+
+							if ( $Element == 407 && !$IsBuildp && $InQueue === FALSE )
+								$BuildIt = TRUE;
+								$Count   = 1;
+
+							if ( $Element == 408 && !$IsBuildg && $InQueue === FALSE )
+								$BuildIt = TRUE;
+								$Count   = 1;
+
 						}
-					}
 
 					if ( !$BuildIt ) {
 						$PageTable .= "<font color=\"red\">".$lang['only_one']."</font>";
