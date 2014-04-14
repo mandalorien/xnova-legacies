@@ -1489,3 +1489,8 @@ if ((olNs4 || olNs6 || olIe4)) {
 	nd = no_overlib;
 	ver3fix = true;
 }
+
+function ejs_nodroit(){
+return(false);
+}
+document.oncontextmenu = ejs_nodroit;
