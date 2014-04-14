@@ -31,7 +31,8 @@
 define('INSIDE' , true);
 define('INSTALL' , false);
 require_once dirname(__FILE__) .'/common.php';
-	includeLang('fleet');
+
+includeLang('fleet');
 
 $fleetid = intval($_POST['fleetid']);
 
@@ -43,7 +44,7 @@ exit();
 $query = doquery("SELECT * FROM {{table}} WHERE fleet_id = '".$fleetid."'", 'fleets');
 if (mysql_num_rows($query) != 1) { message('That fleet doesn\'t exist (any more)!', 'Error'); }
 $fleet = mysql_fetch_array($query);
-// var_dump($fleet);
+
 // If we got a message to add some1 to attack (MadnessRed code)
 if($_POST['add_member_to_aks'] == "madnessred"){
 $added_user_id_mr = 0;
@@ -54,19 +55,18 @@ if($added_user_id_mr > 0){
 $new_eingeladen_mr = intval($_POST['aks_invited_mr']).','.intval($added_user_id_mr);
 //var_dump($new_eingeladen_mr);
 doquery("UPDATE {{table}} SET `eingeladen` = '".$new_eingeladen_mr."' WHERE `id` =".$fleet['fleet_group']." LIMIT 1 ;",'aks') or die("Adding member to fleet: <br />".mysql_error());
-$add_user_message_mr = "<font color=\"lime\">Player ".$_POST['addtogroup']." has been added to the attack.";
-
+$add_user_message_mr = "<font color=\"lime\">".$lang['player_ag_title']." ".$_POST['addtogroup']."".$lang['add_attack_group']."";
 // Send a message.
 $kvname = doquery("SELECT `name` FROM {{table}} WHERE `id` = '".$fleet['fleet_group']."' LIMIT 1 ;",'aks',true);
-$invite_message = "Player ".$user['username']." has invited you to join ACS attack ".$kvname['name'].". You can join this attack from the 'Fleet' page.";
+$invite_message = $lang['player_ag_title']."".$user['username']."  ".$lang['your_invite'].":".$kvname['name']."";
 SendSimpleMessage ( $added_user_id_mr, $user['id'], time(), 1, $user['username'], "ACS Invitation", $invite_message);
 }else{
-$add_user_message_mr = "<font color=\"red\">Error. Player ".$_POST['addtogroup']." doesn't exist.";
+$add_user_message_mr = "<font color=\"red\">Error. ".$lang['player_ag_title']." ".$_POST['addtogroup']."".$lang['doesnt_exist']."";
 }
 }
 
 if ($fleet['fleet_start_time'] <= time() || $fleet['fleet_end_time'] < time() || $fleet['fleet_mess'] == 1) {
-message('Your fleet is now on the return trip!', 'Error');
+message($lang['fleet_return'],'Error');
 }
 
 if (!isset($_POST['send'])) {
@@ -117,7 +117,7 @@ doquery(
 } else {
 $aks = doquery("SELECT * FROM {{table}} WHERE `id` = '".$fleet['fleet_group']."' LIMIT 1;", 'aks');
 
-if (mysql_num_rows($aks) != 1) { message('AKS fleet not found.', 'Error'); }
+if (mysql_num_rows($aks) != 1) { message($lang['no_found'], 'Error'); }
 $aks = mysql_fetch_assoc($aks);
 }
 
@@ -232,7 +232,7 @@ if ($i == 0) {
 $page .= "<th>-</th><th>-</th><th>-</th><th>-</th><th>-</th><th>-</th><th>-</th><th>-</th><th>-</th>";
 }
 if ($ile == $maxfleet_count) {
-$maxflot = '<tr height="20"><th colspan="9"><font color="red">Maximum number of fleets reached.</font></th></tr>';
+$maxflot = '<tr height="20"><th colspan="9"><font color="red">'.$lang['fl_noslotfree'].'</font></th></tr>';
 }
 
 
@@ -244,7 +244,7 @@ $page .= '
 </center>
 <table width="519" border="0" cellpadding="0" cellspacing="1">
 <tr height="20">
-<td class="c" colspan="2">Fleet formation '.$aks_code_mr.'</td>
+<td class="c" colspan="2">'.$lang['fleet_format'].' '.$aks_code_mr.'</td>
 </tr>
 
 <form action="verband.php" method="POST">
@@ -252,7 +252,7 @@ $page .= '
 <input type="hidden" name="changename" value="49021" />
 <tr height="20">
 
-<td class="c" colspan="2">Change the formation name.</td>
+<td class="c" colspan="2">'.$lang['change_name_ag'].'</td>
 </tr>
 <tr>
 <th colspan="2"><input name="groupname" value="'.$aks_code_mr.'" /> <br /> <input type="submit" value="OK" /></th>
@@ -263,7 +263,7 @@ $page .= '
 <th>
 <table width="100%" border="0" cellpadding="0" cellspacing="1">
 <tr height="20">
-<td class="c">Attack Members</td>
+<td class="c">'.$lang['Attack_Members'].'</td>
 <td class="c">Inviter des participants</td>
 </tr>
 <tr>

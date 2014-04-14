@@ -129,6 +129,16 @@ $lang['fl_expe_max'] = "Vous ne pouvez pas envoyer plus de flottes en Exp&eacute
 $lang['fl_adm_attak'] = "Vous &ecirc;tes sur le point de raider une colonie d'administration ... Votre flotte pourrait &ecirc;tre d&eacute;truite en repr&eacute;saille &acirc; cette attaque ... &ecirc;tes vous certains de voulloir continuer cette action ?";
 $lang['fl_warning'] = "Attention";
 
+/* ag */
+$lang['player_ag_title'] = "le joueur ";
+$lang['add_attack_group'] = " a était ajouté au groupe d'attaque.";
+$lang['no_found']= 'attaque groupé non trouvé.';
+$lang['change_name_ag']= "changer le nom de l'attaque groupé";
+$lang['fleet_format']= "flotte en formation ";
+$lang['Attack_Members']= "liste des membres pour l'AG";
+$lang['doesnt_exist']= " n'exite pas ";
+$lang['your_invite']= "vous a invité pour une attaque groupé qui se nomme ";
+$lang['fleet_return'] = "votre flotte est actuellement de retour.";
 $lang['res']['fleet'] = array(
 //Naves
 202 => "Petit transporteur",
