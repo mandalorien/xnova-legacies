@@ -280,27 +280,14 @@ function MissionCaseAttack ($FleetRow)
 			$QryInsertRapport .= '`raport` = "'. mysql_escape_string( $raport ) .'"';
 			doquery($QryInsertRapport,'rw') or die("Error inserting CR to database".mysql_error()."<br /><br />Trying to execute:".mysql_query());
 
-			if($result['won'] == "a")
-			{
-				$style = "green";
-			}
-			elseif ($result['won'] == "w")
-			{
-				$style = "orange";
-			}
-			elseif ($result['won'] == "r")
-			{
-				$style = "red";
-			}
-
             // Colorisation du résumé de rapport pour l'attaquant
             $raport = "<a href # OnClick=\"f( 'CombatReport.php?raport=" . $rid . "', '');\" >";
             $raport .= "<center>";
             if ($result['won'] == "a") {
                 $raport .= "<font color=\"green\">";
-            } elseif ($result['won'] == "r") {
-                $raport .= "<font color=\"orange\">";
             } elseif ($result['won'] == "w") {
+                $raport .= "<font color=\"orange\">";
+            } elseif ($result['won'] == "r") {
                 $raport .= "<font color=\"red\">";
             }
             $raport .= $lang['sys_mess_attack_report'] . " [" . $FleetRow['fleet_end_galaxy'] . ":" . $FleetRow['fleet_end_system'] . ":" . $FleetRow['fleet_end_planet'] . "] </font></a><br /><br />";
@@ -311,20 +298,62 @@ function MissionCaseAttack ($FleetRow)
 
 			SendSimpleMessage ( $FleetRow['fleet_owner'], '', $FleetRow['fleet_start_time'], 3, $lang['sys_mess_tower'], $lang['sys_mess_attack_report'], $raport);
 
-			if($result['won'] == "a")
-			{
-				$style = "red";
-			}
-			elseif ($result['won'] == "w")
-			{
-				$style = "orange";
-			}
-			elseif ($result['won'] == "r")
-			{
-				$style = "green";
-			}
+            // Ajout du petit point raideur
+            $AddPoint = $CurrentUser['xpraid'] + 1;
 
-			$raport2  = "<a href=\"#\" style=\"color:".$style.";\" OnClick='f(\"CombatReport.php?raport=". $rid ."\", \"\");' >" . $lang['sys_mess_attack_report'] ." [". $FleetRow['fleet_end_galaxy'] .":". $FleetRow['fleet_end_system'] .":". $FleetRow['fleet_end_planet'] ."]</a>";
+            $QryUpdateOfficier = "UPDATE {{table}} SET ";
+            $QryUpdateOfficier .= "`xpraid` = '" . $AddPoint . "' ";
+            $QryUpdateOfficier .= "WHERE id = '" . $CurrentUserID . "' ";
+            $QryUpdateOfficier .= "LIMIT 1 ;";
+            doquery($QryUpdateOfficier, 'users');
+            // Ajout d'un point au compteur de raids
+            $RaidsTotal = $user['raids'] + 1;
+            if ($result['won'] == "a") //gagner
+			{
+                $RaidsWin = $user['raidswin'] + 1;
+                $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
+                $QryUpdateRaidsCompteur .= "`raidswin` ='" . $RaidsWin . "', ";
+                $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
+                $QryUpdateRaidsCompteur .= "WHERE id = '" . $user['id'] . "' ";
+                $QryUpdateRaidsCompteur .= "LIMIT 1 ;";
+                doquery($QryUpdateRaidsCompteur, 'users');
+            } 
+			elseif ($result['won'] == "w") //match nul
+			{
+                $RaidsLoose = $user['raidsloose'] + 1;
+                $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
+                $QryUpdateRaidsCompteur .= "`raidsloose` ='" . $RaidsLoose . "', ";
+                $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
+                $QryUpdateRaidsCompteur .= "WHERE id = '" . $user['id'] . "' ";
+                $QryUpdateRaidsCompteur .= "LIMIT 1 ;";
+                doquery($QryUpdateRaidsCompteur, 'users');
+            }
+			elseif ($result['won'] == "r") //perdu
+			{
+                $RaidsLoose = $user['raidsloose'] + 1;
+                $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
+                $QryUpdateRaidsCompteur .= "`raidsloose` ='" . $RaidsLoose . "', ";
+                $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
+                $QryUpdateRaidsCompteur .= "WHERE id = '" . $user['id'] . "' ";
+                $QryUpdateRaidsCompteur .= "LIMIT 1 ;";
+                doquery($QryUpdateRaidsCompteur, 'users');
+            }
+			
+            // Colorisation du résumé de rapport pour le defenseur
+            $raport2 = "<a href # OnClick=\"f( 'CombatReport.php?raport=" . $rid . "', '');\" >";
+            $raport2 .= "<center>";
+            if ($result['won'] == "a") {
+                $raport2 .= "<font color=\"red\">";
+            } elseif ($result['won'] == "w") {
+                $raport2 .= "<font color=\"orange\">";
+            } elseif ($result['won'] == "r") {
+                $raport2 .= "<font color=\"green\">";
+            }
+            $raport2 .= $lang['sys_mess_attack_report'] . " [" . $FleetRow['fleet_end_galaxy'] . ":" . $FleetRow['fleet_end_system'] . ":" . $FleetRow['fleet_end_planet'] . "] </font></a><br /><br />";
+            $raport2 .= "<font color=\"red\">" . $lang['sys_perte_attaquant'] . ": " . pretty_number ($result['lost']['att']) . "</font>";
+            $raport2 .= "<font color=\"green\">   " . $lang['sys_perte_defenseur'] . ":" . pretty_number ($result['lost']['def']) . "</font><br />" ;
+            $raport2 .= $lang['sys_gain'] . " " . $lang['Metal'] . ":<font color=\"#adaead\">" . pretty_number ($steal['metal']) . "</font>   " . $lang['Crystal'] . ":<font color=\"#ef51ef\">" . pretty_number ($steal['crystal']) . "</font>   " . $lang['Deuterium'] . ":<font color=\"#f77542\">" . pretty_number ($steal['deuterium']) . "</font><br />";
+            $raport2 .= $lang['sys_debris'] . " " . $lang['Metal'] . ":<font color=\"#adaead\">" . pretty_number ($result['debree']['def'][0] + $result['debree']['att'][0]) . "</font>   " . $lang['Crystal'] . ":<font color=\"#ef51ef\">" . pretty_number ($result['debree']['def'][1] + $result['debree']['att'][1]) . "</font><br /></center>";
 
 			foreach ($users2 as $id)
 			{

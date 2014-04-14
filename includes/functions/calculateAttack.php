@@ -144,45 +144,6 @@ if(!defined('INSIDE')){ die(header("location:../../"));}
                 $defensePct[$fleetID] = $amount / $defenseAmount['total'];
             }
 
-            // CALCUL DES PERTES !!!
-            $attacker_n = array();
-            $attacker_shield = 0;
-            foreach ($attackers as $fleetID => $attacker) {
-                $attacker_n[$fleetID] = array();
-
-                foreach($attacker['detail'] as $element => $amount) {
-                    $defender_moc = $amount * ($defenseDamage['total'] * $attackPct[$fleetID]) / $attackAmount[$fleetID];
-
-                    if ($amount > 0) {
-                        if ($attArray[$fleetID][$element]['def']/$amount < $defender_moc) {
-                            $max_removePoints = floor($amount * $defenseAmount['total'] / $attackAmount[$fleetID] * $attackPct[$fleetID]);
-
-                            $defender_moc -= $attArray[$fleetID][$element]['def'];
-                            $attacker_shield += $attArray[$fleetID][$element]['def'];
-                            $ile_removePoints = floor($defender_moc / (($pricelist[$element]['metal'] + $pricelist[$element]['crystal'])  / 10));
-
-                            if ($max_removePoints < 0) $max_removePoints = 0;
-                            if ($ile_removePoints < 0) $ile_removePoints = 0;
-
-                            if ($ile_removePoints > $max_removePoints) {
-                                $ile_removePoints = $max_removePoints;
-                            }
-
-                            $attacker_n[$fleetID][$element] = ceil($amount - $ile_removePoints);
-                            if ($attacker_n[$fleetID][$element] <= 0) {
-                                $attacker_n[$fleetID][$element] = 0;
-                            }
-                        } else {
-                            $attacker_n[$fleetID][$element] = round($amount);
-                            $attacker_shield += $defender_moc;
-                        }
-                    } else {
-                        $attacker_n[$fleetID][$element] = round($amount);
-                        $attacker_shield += $defender_moc;
-                    }
-                }
-            }
-
             $defender_n = array();
             $defender_shield = 0;
 
@@ -190,30 +151,32 @@ if(!defined('INSIDE')){ die(header("location:../../"));}
                 $defender_n[$fleetID] = array();
 
                 foreach($defender['def'] as $element => $amount) {
-                    $attacker_moc = $amount * ($attackDamage['total'] * $defensePct[$fleetID]) / $defenseAmount[$fleetID];
-
+                    $attacker_moc = $amount * $attackDamage['total'] / $defenseAmount[$fleetID];#la puissance de l'attaquant
                     if ($amount > 0) {
-                        if ($defArray[$fleetID][$element]['def']/$amount < $attacker_moc) {
-                            $max_removePoints = floor($amount * $attackAmount['total'] / $defenseAmount[$fleetID] * $defensePct[$fleetID]);
+                        if ($defArray[$fleetID][$element]['def'] <= $attacker_moc) { #si le bouclier du defenseur est plus petit ou égale a la puissance de l'attaquant 
                             $attacker_moc -= $defArray[$fleetID][$element]['def'];
                             $defender_shield += $defArray[$fleetID][$element]['def'];
-                            $ile_removePoints = floor($attacker_moc / (($pricelist[$element]['metal'] + $pricelist[$element]['crystal']) / 10));
+							
+							if($defArray[$fleetID][$element]['shield'] > $attacker_moc) #si la coque du defenseur est plus grand que la puissance de l'attaquant
+							{							
+								$coque = $defArray[$fleetID][$element]['shield'] - $attaquant_puissance;
+								$calc = $coque/$defArray[$fleetID][$element]['shield'];
+								if($calc>=1)
+								{
+									$calc = 1;
+								}
+								
+								$RShipDef = round(($calc) * $defenseAmount[$fleetID]);
+								$defender_n[$fleetID][$element] = $RShipDef;
 
-                            if ($max_removePoints < 0) $max_removePoints = 0;
-                            if ($ile_removePoints < 0) $ile_removePoints = 0;
-
-                            if ($ile_removePoints > $max_removePoints) {
-                                $ile_removePoints = $max_removePoints;
-                            }
-
-                            $defender_n[$fleetID][$element] = ceil($amount - $ile_removePoints);
-                            if ($defender_n[$fleetID][$element] <= 0) {
-                                $defender_n[$fleetID][$element] = 0;
-                            }
+								if ($defender_n[$fleetID][$element] <= 0)
+								{
+									$defender_n[$fleetID][$element] = 0;
+								}
 
                         } else {
-                            $defender_n[$fleetID][$element] = round($amount);
-                            $defender_shield += $attacker_moc;
+                            $defender_n[$fleetID][$element] = 0;
+                            $defender_shield = 0;
                         }
                     } else {
                         $defender_n[$fleetID][$element] = round($amount);
@@ -221,43 +184,175 @@ if(!defined('INSIDE')){ die(header("location:../../"));}
                     }
                 }
             }
+		}
 
+			// CALCUL DES PERTES !!!
+            $attacker_n = array();
+            $attacker_shield = 0;
+            foreach ($attackers as $fleetID => $attacker) {
+                $attacker_n[$fleetID] = array();
+
+                foreach($attacker['detail'] as $element => $amount) {
+                    $defender_moc = $amount * $defenseDamage['total'] / $attackAmount[$fleetID];  #la puissance de du defenseur
+
+                    if ($amount > 0) {
+                        if ($attArray[$fleetID][$element]['def'] <= $defender_moc) {#si le bouclier de l'attaquant est plus petit ou égale a la puissance du def
+						
+                            $defender_moc -= $attArray[$fleetID][$element]['def'];
+                            $attacker_shield += $attArray[$fleetID][$element]['def'];
+							if($attArray[$fleetID][$element]['shield'] > $defender_moc)#si la coque de l'attaquant est plus grand que la puissance de l'attaquant
+							{
+								// on soustrait la valeur de la coque attaquante a la puissance du defenseur
+								$coque = ($attArray[$fleetID][$element]['shield']) - $defender_moc;
+								
+								$calc = $coque/$attArray[$fleetID][$element]['shield'];
+								if($calc >= 1)
+								{
+									$calc = 1;
+								}
+								$RShipAtt = round(($calc) * $attackAmount[$fleetID]);
+								$attacker_n[$fleetID][$element] = $RShipAtt;
+								
+								if ($attacker_n[$fleetID][$element] <= 0)
+								{
+									$attacker_n[$fleetID][$element] = 0;
+								}
+							}
+							else
+							{
+								$attacker_n[$fleetID][$element] = 0;
+								$attacker_shield = 0;
+							}
+                    } else {
+                        $attacker_n[$fleetID][$element] = round($amount);
+                        $attacker_shield += $defender_moc;
+                    }
+                }
+            }
+		}
+
+		
+		
             // "Rapidfire"
             foreach ($attackers as $fleetID => $attacker) {
                 foreach ($defenders as $fleetID2 => $defender) {
                     foreach($attacker['detail'] as $element => $amount) {
                         if ($amount > 0) {
                             foreach ($CombatCaps[$element]['sd'] as $c => $d) {
-                                if (isset($defender['def'][$c])) {
-                                    if ($d > 0) {
-                                        $e = ($d / $defender['techs'][0]) / ($defender['techs'][1] * $attacker['techs'][2]);
-                                        $defender_n[$fleetID2][$c] -= ceil(($amount * $e * (rand(50,120)/ 100)/ 2) * $defensePct[$fleetID2] * ($amount / $attackAmount[$fleetID]));
-                                        if ($defender_n[$fleetID2][$c] <= 0) {
-                                            $defender_n[$fleetID2][$c] = 0;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+								if($defender['def'][$c]!='0' && $defender['def'][$c]!=null)
+								{
+									if($d > 1) {
+										$rapidfire = true;
+									}
+								}
+							}
+							
+							
+							while($rapidfire)
+							{
+								$randEntier = rand(0,100);
+								$randDecimal = rand(0,99);
+								$pourcentage = $randEntier + ($randDecimal / 100);
+								foreach ($CombatCaps[$element]['sd'] as $c => $d) {
+									if($defender['def'][$c]!='0' && $defender['def'][$c]!=null)
+									{
+										if($pourcentage < 100*(1 - ( 1 / $CombatCaps[$element]['sd'][$c])))
+										{
+											var_dump($defenseAmount[$fleetID2]);
+											if ($defenseAmount[$fleetID2] > 0)
+											{
+												$attacker_moc = $amount * $attackDamage['total'] / $defenseAmount[$fleetID2];#la puissance de l'attaquant
 
+												$newcoque = $defArray[$fleetID2][$c]['shield'] / $defenseAmount[$fleetID2] * $defender_n[$fleetID2][$c];
+												if($newcoque > $attacker_moc)
+												{
+													$coque = $newcoque - $attacker_moc;
+													$calc = $coque/$newcoque;		
+													if($calc >= 1)
+													{
+														$calc = 1;
+													}
+
+													$RFRShipDef = round(($calc) * $defenseAmount[$fleetID2]);
+													$enleDEF = ($defenseAmount[$fleetID2] - $RFRShipDef);
+													$defenseAmount[$fleetID2] -= $RFRShipDef - $enleDEF;
+													if ($defender_n[$fleetID2][$c] <= 0) {
+															$defender_n[$fleetID2][$c] = 0;
+													}
+												}
+											} else {
+												$defender_n[$fleetID2][$c] = $defenseAmount[$fleetID2];
+												$defender_shield = $defender_shield + $attacker_moc;
+											}		
+										} else{
+											$rapidfire = false;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+            // "Rapidfire"
+            foreach ($defenders as $fleetID => $defender) {
+                foreach ($attackers as $fleetID2 => $attacker) {
                     foreach($defender['def'] as $element => $amount) {
                         if ($amount > 0) {
                             foreach ($CombatCaps[$element]['sd'] as $c => $d) {
-                                if (isset($attacker['detail'][$c])) {
-                                    if ($d > 0) {
-                                        $e = ($d / $defender['techs'][0]) / ($defender['techs'][1] * $attacker['techs'][2]);
-                                        $attacker_n[$fleetID][$c] -= ceil(($amount * $e * (rand(50,120)/ 100)/ 2) * $attackPct[$fleetID] * ($amount / $defenseAmount[$fleetID2]));
-                                        if ($attacker_n[$fleetID][$c] <= 0) {
-                                            $attacker_n[$fleetID][$c] = 0;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+								if($attacker['def'][$c]!='0' && $attacker['def'][$c]!=null)
+								{
+									if($d > 1) {
+										$rapidfire = true;
+									}
+								}
+							}
+							while($rapidfire)
+							{
+								$randEntier = rand(0,100);
+								$randDecimal = rand(0,99);
+								$pourcentage = $randEntier + ($randDecimal / 100);
+								foreach ($CombatCaps[$element]['sd'] as $c => $d) {
+									if($attacker['def'][$c]!='0' && $attacker['def'][$c]!=null)
+									{
+										if($pourcentage < 100*(1 - ( 1 / $CombatCaps[$element]['sd'][$c])))
+										{
+											if ($attackAmount[$fleetID2] > 0)
+											{
+												$defender_moc = $amount * $defenseDamage['total'] / $attackAmount[$fleetID2];#la puissance de l'attaquant
+
+												$newcoque = $attArray[$fleetID2][$c]['shield'] / $attackAmount[$fleetID2] * $attacker_n[$fleetID2][$c];
+												if($newcoque > $defender_moc)
+												{
+													$coque = $newcoque - $defender_moc;
+													$calc = $coque/$newcoque;		
+													if($calc >= 1)
+													{
+														$calc = 1;
+													}
+
+													$RFRShipAtt = round(($calc) * $attackAmount[$fleetID2]);
+													$enleATT = ($attackAmount[$fleetID2] - $RFRShipAtt);
+													$attackAmount[$fleetID2] -= $RFRShipAtt - $enleATT;
+													if ($attacker_n[$fleetID2][$c] <= 0) {
+															$attacker_n[$fleetID2][$c] = 0;
+													}
+												}
+											} else {
+												$attacker_n[$fleetID2][$c] = $attackAmount[$fleetID2];
+												$attacker_shield = $attacker_shield + $defender_moc;
+											}		
+										} else{
+											$rapidfire = false;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 
             $rounds[$round]['attackShield'] = $attacker_shield;
             $rounds[$round]['defShield'] = $defender_shield;

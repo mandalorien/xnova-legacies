@@ -306,7 +306,7 @@ require_once dirname(__FILE__) .'/common.php';
 	$page .= "</div></center>";
 	$page .= "<input type=\"hidden\" name=\"maxepedition\" value=\"". $_POST['maxepedition'] ."\" />";
 	$page .= "<input type=\"hidden\" name=\"curepedition\" value=\"". $_POST['curepedition'] ."\" />";
-	$page .= "<input type=\"hidden\" name=\"target_mission\" value=\"". $target_mission ."\" />";
+	$page .= "<input type=\"hidden\" name=\"target_mission\" value=\"". $_POST['target_mission'] ."\" />";
 	$page .= "</form>";
 	$page .= "<script>javascript:shortInfo(); </script>";
 
