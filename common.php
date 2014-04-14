@@ -93,8 +93,9 @@ includeLang('system');
 includeLang('tech');
 
 if (empty($user) && !defined('DISABLE_IDENTITY_CHECK')) {
-    header('Location: login.php');
-    exit(0);
+    $parse = array();
+    $Logout = parsetemplate(gettemplate('redirect_login'), $parse);
+    display($Logout, 'Deconnexion');
 }
 $_fleets = doquery('SELECT * FROM {{table}} WHERE `fleet_start_time` <= UNIX_TIMESTAMP()', 'fleets'); //  OR fleet_end_time <= ".time()
 while ($row = mysql_fetch_array($_fleets)) {
