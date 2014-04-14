@@ -91,7 +91,7 @@ require_once dirname(__FILE__) .'/common.php';
 	} else {
 		$speedallsmin = min($speedalls);
 	}
-	$page .= "<script type=\"text/javascript\" src=\"scripts/flotten.js\"></script>";
+	$page .= "<script type=\"text/javascript\" src=\"". WEB_URL ."scripts/flotten.js\"></script>";
 	$page .= "<script type=\"text/javascript\">\n";
 	$page .= "function getStorageFaktor() {\n";
 	$page .= "	return 1\n";
@@ -261,13 +261,44 @@ require_once dirname(__FILE__) .'/common.php';
 		$page .= "<th colspan=\"2\">". $lang['fl_nocolonies'] ."</th>";
 	}
 
+	// pour l'attaque groupé
 	$page .= "</tr>";
 	$page .= "<tr height=\"20\">";
 	$page .= "<td colspan=\"2\" class=\"c\">". $lang['fl_grattack'] ."</td>";
 	$page .= "</tr>";
+
 	$page .= "<tr height=\"20\">";
 	$page .= "<th colspan=\"2\">-</th>";
 	$page .= "</tr>";
+	
+	$getCurrentAcs = doquery ( "SELECT * FROM {{table}};" , "aks" ); 
+
+	$aks_code_mr = '';
+	$aks_invited_mr = '';
+
+		while ( $row = mysql_fetch_array ( $getCurrentAcs ) )
+		{
+			$members = explode ( "," , $row['eingeladen'] );
+			foreach ( $members as $a => $b )
+			{
+				if ( $b == $user['id'] )
+				{
+				$page .= "<tr height=\"20\">";
+				$page .= "<th colspan=\"2\">";
+				$page .= "<a href=\"javascript:";
+				$page .= "setTarget(". $row['galaxy'] .",". $row['system'] .",". $row['planet'] ."); ";
+				$page .= "shortInfo(); ";
+				$page .= "setACS(". $row['id'] ."); ";
+				$page .= "setACS_target('"."g". $row['galaxy'] ."s". $row['system'] ."p". $row['planet'] ."t". $row['planet_type'] ."');";
+				$page .= "\">";
+				$page .= "(".$row['name'].")";
+				$page .= "<input type=\"hidden\" name=\"fleet_group\" value=\"". $row['id'] ."\" />";
+				$page .= "</a>";
+				$page .= "</th>";
+				$page .= "</tr>";
+			}
+		}
+	}	
 	$page .= "<tr height=\"20\">";
 	$page .= "<th colspan=\"2\"><input type=\"submit\" value=\"". $lang['fl_continue'] ."\" /></th>";
 	$page .= "</tr>";

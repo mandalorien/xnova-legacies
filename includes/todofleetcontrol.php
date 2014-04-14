@@ -29,7 +29,11 @@
  */
 
 include(ROOT_PATH . 'includes/functions/FlyingFleetHandler.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/calculateAttack.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/formatCR.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/calculateAKSSteal.'.PHPEXT);
 include(ROOT_PATH . 'includes/functions/MissionCaseAttack.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseACS.'.PHPEXT);
 include(ROOT_PATH . 'includes/functions/MissionCaseStay.'.PHPEXT);
 include(ROOT_PATH . 'includes/functions/MissionCaseStayAlly.'.PHPEXT);
 include(ROOT_PATH . 'includes/functions/MissionCaseTransport.'.PHPEXT);

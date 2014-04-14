@@ -36,6 +36,23 @@ require_once dirname(__FILE__) .'/common.php';
 
 	includeLang('fleet');
 
+	if($_POST['fleet_group'] > 0)
+	{
+		if($_POST['mission'] == 2)
+		{
+			$target = "g".intval($_POST["galaxy"])."s".intval($_POST["system"])."p".intval($_POST["planet"])."t".intval($_POST["planettype"]);
+			// if($_POST['acs_target_mr'] == $target)
+			// {
+				$aks_count_mr = doquery("SELECT * FROM {{table}} WHERE id = '".intval($_POST['fleet_group'])."'",'aks');
+				if (mysql_num_rows($aks_count_mr) > 0)
+					$fleet_group_mr = $_POST['fleet_group'];
+			// }
+		}
+	}
+
+	if(($_POST['fleet_group'] == 0) && ($_POST['mission'] == 2))
+		$_POST['mission'] = 1;
+		
 	$CurrentPlanet = doquery("SELECT * FROM {{table}} WHERE `id` = '". $user['current_planet'] ."'", 'planets', true);
 	$TargetPlanet  = doquery("SELECT * FROM {{table}} WHERE `galaxy` = '". $_POST['galaxy'] ."' AND `system` = '". $_POST['system'] ."' AND `planet` = '". $_POST['planet'] ."' AND `planet_type` = '". $_POST['planettype'] ."';", 'planets', true);
 	$MyDBRec       = doquery("SELECT * FROM {{table}} WHERE `id` = '". $user['id']."';", 'users', true);
@@ -150,6 +167,8 @@ require_once dirname(__FILE__) .'/common.php';
 				$_POST['ship215'] >= 1) {
 				if (!$YourPlanet) {
 					$missiontype[1] = $lang['type_mission'][1];
+					if($fleet_group_mr > 0)
+						$missiontype[2] = $lang['type_mission'][2];
 				}
 				$missiontype[3] = $lang['type_mission'][3];
 				$missiontype[5] = $lang['type_mission'][5];
@@ -161,14 +180,7 @@ require_once dirname(__FILE__) .'/common.php';
 		}
 		if ($YourPlanet)
 			$missiontype[4] = $lang['type_mission'][4];
-
-		if ( $_POST['planettype'] == 3 &&
-			($_POST['ship214']         ||
-			 $_POST['ship213'])        &&
-			 !$YourPlanet              &&
-			 $UsedPlanet) {
-			$missiontype[2] = $lang['type_mission'][2];
-		}
+			
         if ( $_POST['planettype'] == 3 &&
 	     $_POST['ship214'] >= 1    &&
            !$YourPlanet            &&
@@ -440,6 +452,26 @@ require_once dirname(__FILE__) .'/common.php';
 		}
 	}
 
+	if ($fleet_group_mr != 0)
+	{
+		$AksStartTime = doquery("SELECT MAX(`fleet_start_time`) AS Start FROM {{table}} WHERE `fleet_group` = '". $fleet_group_mr . "';", "fleets", true);
+		if ($AksStartTime['Start'] >= $fleet['start_time'])
+		{
+			$fleet['end_time']        += $AksStartTime['Start'] - $fleet['start_time'];
+			$fleet['start_time']     = $AksStartTime['Start'];
+		}
+		else
+		{
+			$QryUpdateFleets = "UPDATE {{table}} SET ";
+			$QryUpdateFleets .= "`fleet_start_time` = '". $fleet['start_time'] ."', ";
+			$QryUpdateFleets .= "`fleet_end_time` = `fleet_end_time` + '".($fleet['start_time'] - $AksStartTime['Start'])."' ";
+			$QryUpdateFleets .= "WHERE ";
+			$QryUpdateFleets .= "`fleet_group` = '". $fleet_group_mr ."';";
+			$test = doquery($QryUpdateFleets, 'fleets');
+			var_dump($QryUpdateFleets);
+			$fleet['end_time']         += $fleet['start_time'] - $AksStartTime['Start'];
+		}
+	}
 	// ecriture de l'enregistrement de flotte (a partir de l�, y a quelque chose qui vole et c'est toujours sur la planete d'origine)
 	$QryInsertFleet  = "INSERT INTO {{table}} SET ";
 	$QryInsertFleet .= "`fleet_owner` = '". $user['id'] ."', ";
@@ -461,6 +493,7 @@ require_once dirname(__FILE__) .'/common.php';
 	$QryInsertFleet .= "`fleet_resource_crystal` = '". $TransCrystal ."', ";
 	$QryInsertFleet .= "`fleet_resource_deuterium` = '". $TransDeuterium ."', ";
 	$QryInsertFleet .= "`fleet_target_owner` = '". $TargetPlanet['id_owner'] ."', ";
+	$QryInsertFleet .= "`fleet_group` = '".intval($fleet_group_mr)."',  ";
 	$QryInsertFleet .= "`start_time` = '". time() ."';";
 	doquery( $QryInsertFleet, 'fleets');
 

@@ -172,20 +172,31 @@ switch ($mode) {
             // --- Gestion des flottes personnelles ---------------------------------------------------------
             // Toutes de vert vetues
             $OwnFleets = doquery("SELECT * FROM {{table}} WHERE `fleet_owner` = '" . $user['id'] . "';", 'fleets');
-            $Record = 0;
-            while ($FleetRow = mysql_fetch_array($OwnFleets)) {
+            
+			$Record = 0;
+            
+			while ($FleetRow = mysql_fetch_array($OwnFleets))
+			{
                 $Record++;
-
-                $StartTime = $FleetRow['fleet_start_time'];
-                $StayTime = $FleetRow['fleet_end_stay'];
-                $EndTime = $FleetRow['fleet_end_time'];
+				
+				$StartTime 	= $FleetRow['fleet_start_time'];
+				$StayTime 	= $FleetRow['fleet_end_stay'];
+				$EndTime 	= $FleetRow['fleet_end_time'];
+				/////// // ### LUCKY , CODES ARE BELOW
+				$hedefgalaksi 	= $FleetRow['fleet_end_galaxy'];
+				$hedefsistem 	= $FleetRow['fleet_end_system'];
+				$hedefgezegen 	= $FleetRow['fleet_end_planet'];
+				$mess 			= $FleetRow['fleet_mess'];
+				$filogrubu 		= $FleetRow['fleet_group'];
+				$id         	= $FleetRow['fleet_id'];
+				//////
                 // Flotte a l'aller
                 $Label = "fs";
                 if ($StartTime > time()) {
                     $fpage[$StartTime] = BuildFleetEventTable ($FleetRow, 0, true, $Label, $Record);
                 }
 
-                if ($FleetRow['fleet_mission'] <> 4) {
+                if (($FleetRow['fleet_mission'] <> 4) && ($FleetRow['fleet_mission'] <> 10)) {
                     // Flotte en stationnement
                     $Label = "ft";
                     if ($StayTime > time()) {
@@ -198,6 +209,62 @@ switch ($mode) {
                     }
                 }
             } // End While
+			mysql_free_result($OwnFleets);
+			//iss ye katilan filo////////////////////////////////////
+
+			// ### LUCKY , CODES ARE BELOW
+
+			$dostfilo = doquery("SELECT * FROM {{table}} WHERE `fleet_end_galaxy` = '" . intval($hedefgalaksi) . "' AND `fleet_end_system` = '" . intval($hedefsistem) . "' AND `fleet_end_planet` = '" . intval($hedefgezegen) . "' AND `fleet_group` = '" . intval($filogrubu) . "';", 'fleets');
+			$Record1 = 0;
+			while ($FleetRow = mysql_fetch_array($dostfilo)) {
+
+
+				$StartTime = $FleetRow['fleet_start_time'];
+				$StayTime = $FleetRow['fleet_end_stay'];
+				$EndTime = $FleetRow['fleet_end_time'];
+
+				///////
+				$hedefgalaksi = $FleetRow['fleet_end_galaxy'];
+				$hedefsistem = $FleetRow['fleet_end_system'];
+				$hedefgezegen = $FleetRow['fleet_end_planet'];
+				$mess = $FleetRow['fleet_mess'];
+				$filogrubu = $FleetRow['fleet_group'];
+				$id	= $FleetRow['fleet_id'];
+				///////
+				if (($FleetRow['fleet_mission'] == 2) && ($FleetRow['fleet_owner'] != $user['id'])) {
+					$Record1++;
+					//		if (($FleetRow['fleet_mission'] == 2) ){
+					if($mess > 0){
+						$StartTime = "";
+					}else{
+						$StartTime = $FleetRow['fleet_start_time'];
+					}
+
+					if ($StartTime > time()) {
+						$Label = "ofs";
+						$fpage[$StartTime] = BuildFleetEventTable ($FleetRow, 0, true, $Label, $Record1);
+					}
+
+					//	}
+				} ///""
+
+				if (($FleetRow['fleet_mission'] == 1) && ($FleetRow['fleet_owner'] != $user['id']) && ($filogrubu > 0 ) ){
+					$Record++;
+					if($mess > 0){
+						$StartTime = "";
+					}else{
+						$StartTime = $FleetRow['fleet_start_time'];
+					}
+					if ($StartTime > time()) {
+						$Label = "ofs";
+						$fpage[$StartTime]  = BuildFleetEventTable ($FleetRow, 0, true, $Label, $Record);
+					}
+
+				}
+
+			}
+			mysql_free_result($dostfilo);
+			//
             // -----------------------------------------------------------------------------------------------
             // --- Gestion des flottes autres que personnelles ----------------------------------------------
             // Flotte ennemies (ou amie) mais non personnelles
@@ -208,8 +275,9 @@ switch ($mode) {
                 if ($FleetRow['fleet_owner'] != $user['id']) {
                     if ($FleetRow['fleet_mission'] != 8) {
                         $Record++;
-                        $StartTime = $FleetRow['fleet_start_time'];
-                        $StayTime = $FleetRow['fleet_end_stay'];
+						$StartTime 	= $FleetRow['fleet_start_time'];
+						$StayTime 	= $FleetRow['fleet_end_stay'];
+						$id         = $FleetRow['fleet_id'];
 
                         if ($StartTime > time()) {
                             $Label = "ofs";

@@ -356,3 +356,50 @@ function CreateFleetPopupedMissionLink ( $FleetRow, $Texte, $FleetType ) {
 
     return $MissionPopup;
 }
+
+function shortly_number($number)
+{
+// MAS DEL TRILLON
+if ($number >= 1000000000000000000000000)
+return pretty_number(($number/1000000000000000000))."&nbsp;<font color=lime>T+</font>";
+
+// TRILLON
+elseif ($number >= 1000000000000000000 && $number < 1000000000000000000000000)
+return pretty_number(($number/1000000000000000000))."&nbsp;<font color=lime>T</font>";
+
+// BILLON
+elseif ($number >= 1000000000000 && $number < 1000000000000000000)
+return pretty_number(($number/1000000000000))."&nbsp;<font color=lime>B</font>";
+
+// MILLON
+elseif ($number >= 1000000 && $number < 1000000000000)
+return pretty_number(($number/1000000))."&nbsp;<font color=lime>M</font>";
+
+// MIL
+elseif ($number >= 1000 && $number < 1000000)
+return pretty_number(($number/1000))."&nbsp;<font color=lime>K</font>";
+
+// NUMERO SIN DEFINIR
+else
+return pretty_number($number);
+}
+
+function floattostring($Numeric, $Pro = 0, $Output = FALSE)
+{
+return ($Output) ? str_replace(",",".", sprintf("%.".$Pro."f", $Numeric)) : sprintf("%.".$Pro."f", $Numeric);
+}
+
+function roundUp($value, $precision = 0)
+{
+if ( $precision == 0 )
+{
+$precisionFactor = 1;
+}
+
+else
+{
+$precisionFactor = pow( 10, $precision );
+}
+
+return ceil( $value * $precisionFactor )/$precisionFactor;
+}

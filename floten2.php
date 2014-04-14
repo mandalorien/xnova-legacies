@@ -37,6 +37,7 @@ require_once dirname(__FILE__) .'/common.php';
 	$system     = intval($_POST['system']);
 	$planet     = intval($_POST['planet']);
 	$planettype = intval($_POST['planettype']);
+	$fleetgroup = intval($_POST['fleet_group']);
 
 	// Test d'existance et de proprieté de la planete
 	$YourPlanet = false;
@@ -85,6 +86,8 @@ require_once dirname(__FILE__) .'/common.php';
 			$_POST['ship215'] >= 1) {
 			if (!$YourPlanet) {
 				$missiontype[1] = $lang['type_mission'][1];
+				if($fleetgroup > 0)
+					$missiontype[2] = $lang['type_mission'][2];
 			}
 			$missiontype[3] = $lang['type_mission'][3];
 			$missiontype[5] = $lang['type_mission'][5];
@@ -97,13 +100,6 @@ require_once dirname(__FILE__) .'/common.php';
 	if ($YourPlanet)
 		$missiontype[4] = $lang['type_mission'][4];
 
-	if ( $_POST['planettype'] == 3 &&
-		($_POST['ship214']         ||
-		 $_POST['ship213'])        &&
-		 !$YourPlanet              &&
-		 $UsedPlanet) {
-		$missiontype[2] = $lang['type_mission'][2];
-	}
 	if ( $_POST['planettype'] == 3 &&
 	     $_POST['ship214'] >= 1    &&
            !$YourPlanet            &&
@@ -185,6 +181,7 @@ require_once dirname(__FILE__) .'/common.php';
 	$page .= "<input type=\"hidden\" name=\"usedfleet\"      value=\"". $_POST["usedfleet"] ."\" />\n";
 	$page .= "<input type=\"hidden\" name=\"maxepedition\"   value=\"". $_POST['maxepedition'] ."\" />\n";
 	$page .= "<input type=\"hidden\" name=\"curepedition\"   value=\"". $_POST['curepedition'] ."\" />\n";
+	$page .= "<input type=\"hidden\" name=\"fleet_group\"   value=\"". $_POST['fleet_group'] ."\" />\n";
 	foreach ($fleetarray as $Ship => $Count) {
 		$page .= "<input type=\"hidden\" name=\"ship". $Ship ."\"        value=\"". $Count ."\" />\n";
 		$page .= "<input type=\"hidden\" name=\"capacity". $Ship ."\"    value=\"". $pricelist[$Ship]['capacity'] ."\" />\n";

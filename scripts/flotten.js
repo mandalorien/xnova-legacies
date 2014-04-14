@@ -635,3 +635,12 @@ function abs(a) {
 	if(a < 0) return -a;
 	return a;
 }
+
+// attaque gorupé 
+function setACS(id) {
+    document.getElementsByName('fleet_group')[0].value = id;
+}
+
+function setACS_target(tacs) {
+    document.getElementsByName('acs_target_mr')[0].value = tacs;
+} 

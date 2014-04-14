@@ -56,8 +56,7 @@ function FlyingFleetHandler (&$planet) {
 				break;
 
 			case 2:
-				// Attaque groupée
-				doquery ("DELETE FROM {{table}} WHERE `fleet_id` = '". $CurrentFleet['fleet_id'] ."';", 'fleets');
+				MissionCaseACS ( $CurrentFleet );
 				break;
 
 			case 3:

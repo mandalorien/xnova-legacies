@@ -37,7 +37,7 @@
 	$QryTableAks        .= "`galaxy` int(2) default NULL, ";
 	$QryTableAks        .= "`system` int(4) default NULL, ";
 	$QryTableAks        .= "`planet` int(2) default NULL, ";
-	$QryTableAks        .= "`eingeladen` int(11) default NULL, ";
+	$QryTableAks        .= "`eingeladen` text collate latin1_general_ci, ";
 	$QryTableAks        .= "PRIMARY KEY  (`id`) ";
 	$QryTableAks        .= ") ENGINE=MyISAM;";
 
@@ -383,6 +383,7 @@
 
 	// Table rw
 	$QryTableRw          = "CREATE TABLE `{{table}}` ( ";
+	$QryTableRw         .= "`owners` varchar(255) character set latin1 NOT NULL,";
 	$QryTableRw         .= "`id_owner1` int(11) NOT NULL default '0', ";
 	$QryTableRw         .= "`id_owner2` int(11) NOT NULL default '0', ";
 	$QryTableRw         .= "`rid` varchar(72) character set latin1 NOT NULL, ";
