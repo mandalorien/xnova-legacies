@@ -67,8 +67,9 @@ $lang['ov_temp_to']              = "&agrave;";
 $lang['ov_local_cdr']            = "Champ de d&eacute;bris";
 $lang['ov_pts_build']            = "Batiments";
 $lang['ov_pts_fleet']            = "Flotte";
-$lang['ov_pts_defs']            = "Defense";
+$lang['ov_pts_defs']             = "Defense";
 $lang['ov_pts_reche']            = "Recherche";
+$lang['ov_pts_prts']             = "Pertes";
 $lang['ov_pts_total']            = "Total";
 
 

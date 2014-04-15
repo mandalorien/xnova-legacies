@@ -48,8 +48,8 @@ switch ($mode) {
         // -----------------------------------------------------------------------------------------------
         if ($_POST['action'] == $lang['namer']) {
             // Reponse au changement de nom de la planete
-            $UserPlanet = addslashes(CheckInputStrings ($_POST['newname']));
-            $newname = mysql_escape_string(trim($UserPlanet));
+            $UserPlanet = htmlentities($_POST['newname'],ENT_QUOTES,'UTF-8');
+            $newname = $UserPlanet;
             if ($newname != "") {
                 // Deja on met jour la planete qu'on garde en memoire (pour le nom)
                 $planetrow['name'] = $newname;
@@ -65,23 +65,24 @@ switch ($mode) {
             // Cas d'abandon d'une colonie
             // Affichage de la forme d'abandon de colonie
             $parse = $lang;
+			$parse['link'] = INDEX_BASE;
             $parse['planet_id'] = $planetrow['id'];
             $parse['galaxy_galaxy'] = $planetrow['galaxy'];
             $parse['galaxy_system'] = $planetrow['system'];
             $parse['galaxy_planet'] = $planetrow['planet'];
-            $parse['planet_name'] = $planetrow['name'];
+            $parse['planet_name'] =  stripslashes($planetrow['name']);
 
             $page .= parsetemplate(gettemplate('overview_deleteplanet'), $parse);
             // On affiche la forme pour l'abandon de la colonie
             display($page, $lang['rename_and_abandon_planet']);
-        } elseif ($_POST['kolonieloeschen'] == 1 && $_POST['deleteid'] == $user['current_planet']) {
+        } elseif ($_POST['kolonieloeschen'] == 1 && $deleteid == $user['current_planet']) {
                 // Controle du mot de passe pour abandon de colonie
                 if (md5($_POST['pw']) == $user["password"] && $user['id_planet'] != $user['current_planet']) {
 
-                include_once(ROOT_PATH . 'includes/functions/AbandonColony.' . PHPEXT);
+                include_once(INCLUDES . 'functions/AbandonColony.' . PHPEXT);
                 if (CheckFleets($planetrow)){
                    $strMessage = "Vous ne pouvez pas abandonner la colonie, il y a de la flotte en vol !";
-                   message($strMessage, $lang['colony_abandon'], 'overview.php?mode=renameplanet',3);
+                   message($strMessage, $lang['colony_abandon'], 'overview&mode=renameplanet',3);
                 }
 
                 AbandonColony($user,$planetrow);
@@ -97,17 +98,17 @@ switch ($mode) {
                 } elseif ($user['id_planet'] == $user["current_planet"]) {
                     // Et puis quoi encore ??? On ne peut pas effacer la planete mere ..
                     // Uniquement les colonies cr�es apres coup !!!
-                    message($lang['deletemessage_wrong'], $lang['colony_abandon'], 'overview.php?mode=renameplanet');
+                    message($lang['deletemessage_wrong'], $lang['colony_abandon'], 'overview&mode=renameplanet');
 
                 } else {
                     // Erreur de saisie du mot de passe je n'efface pas !!!
-                    message($lang['deletemessage_fail'] , $lang['colony_abandon'], 'overview.php?mode=renameplanet');
+                    message($lang['deletemessage_fail'] , $lang['colony_abandon'], 'overview&mode=renameplanet');
 
                 }
             }
 
         $parse = $lang;
-
+		$parse['link'] = INDEX_BASE;
         $parse['planet_id'] = $planetrow['id'];
         $parse['galaxy_galaxy'] = $planetrow['galaxy'];
         $parse['galaxy_system'] = $planetrow['system'];
@@ -116,7 +117,7 @@ switch ($mode) {
 
         $page .= parsetemplate(gettemplate('overview_renameplanet'), $parse);
         // On affiche la page permettant d'abandonner OU de renomme une Colonie / Planete
-        display($page, $lang['rename_and_abandon_planet']);
+        display($page,$title,true);
         break;
 
     default:
@@ -434,6 +435,14 @@ switch ($mode) {
             $parse['user_fleet'] = pretty_number($StatRecord['fleet_points']);
             $parse['player_points_tech'] = pretty_number($StatRecord['tech_points']);
 			$parse['player_points_def'] = pretty_number($StatRecord['defs_points']);
+			if($StatRecord['pertes_points']<0)
+			{
+				$parse['player_points_pertes'] = 0;
+			}
+			else
+			{
+				$parse['player_points_pertes'] = pretty_number($StatRecord['pertes_points']);
+			}
             $parse['total_points'] = pretty_number($StatRecord['total_points']);;
 
             $parse['user_rank'] = $StatRecord['total_rank'];
