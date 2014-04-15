@@ -43,15 +43,16 @@ SELECT * FROM {{table}}
 EOF;
         $userData = doquery($sql, 'users', true);
     } else if (isset($_COOKIE['nova-cookie'])) {
+        $cookieData = unserialize(stripslashes($_COOKIE['nova-cookie']));
         $cookieData = array(
-            'id' => (isset($_COOKIE['nova-cookie']['id']) ? (int) $_COOKIE['nova-cookie']['id'] : 0),
-            'key' => (isset($_COOKIE['nova-cookie']['key']) ? (string) $_COOKIE['nova-cookie']['key'] : NULL)
+            'id' => (isset($cookieData['id']) ? (int) $cookieData['id'] : 0),
+            'key' => (isset($cookieData['key']) ? (string) $cookieData['key'] : null)
             );
 
         $sql =<<<EOF
-SELECT * FROM {{table}}
+SELECT * FROM {{table}} AS user
     WHERE id={$cookieData['id']}
-      AND (@key:={$cookieData['key']})=CONCAT((@salt:=MID(@key, 0, 4)), SHA1(CONCAT(u.username, u.password, @salt))
+      AND (@key:="{$cookieData['key']}")=CONCAT((@salt:=MID(@key, 0, 4)), SHA1(CONCAT(user.username, user.password, @salt)))
     LIMIT 1
 EOF;
         $userData = doquery($sql, 'users', true);
@@ -59,24 +60,30 @@ EOF;
         if (empty($userData)) {
             message($lang['cookies']['Error2'] );
         }
-
-        $sessionData = array(
-            'request_uri' => mysql_real_escape_string($_SERVER['REQUEST_URI']),
-            'remote_addr' => mysql_real_escape_string($_SERVER['REMOTE_ADDR']/* . (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? '|' . $_SERVER['HTTP_X_FORWARDED_FOR'] : '')*/),
-            'user_agent' => mysql_real_escape_string($_SERVER['HTTP_USER_AGENT'])
+    } else {
+        return array(
+            'state' => false,
+            'record' => array()
             );
-        $sql =<<<EOF
+    }
+
+    $sessionData = array(
+        'request_uri' => mysql_real_escape_string($_SERVER['REQUEST_URI']),
+        'remote_addr' => mysql_real_escape_string($_SERVER['REMOTE_ADDR']/* . (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? '|' . $_SERVER['HTTP_X_FORWARDED_FOR'] : '')*/),
+        'user_agent' => mysql_real_escape_string($_SERVER['HTTP_USER_AGENT'])
+        );
+    $now = time();
+    $sql =<<<EOF
 UPDATE {{table}}
-    SET `onlinetime` = UNIX_TIMESTAMP(NOW()),
+    SET `onlinetime` = "{$now}",
         `current_page` = "{$sessionData['request_uri']}",
         `user_lastip` = "{$sessionData['remote_addr']}",
         `user_agent` = "{$sessionData['user_agent']}"
     WHERE `id`={$_SESSION['user_id']}
     LIMIT 1;
 EOF;
-        doquery($sql, 'users');
-        $IsUserChecked = true;
-    }
+    doquery($sql, 'users');
+    $IsUserChecked = true;
 
     return array(
         'state' => $IsUserChecked,

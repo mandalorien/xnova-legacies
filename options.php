@@ -71,11 +71,11 @@ require_once dirname(__FILE__) .'/common.php';
        }
     }
     if ($_POST && $mode == "change") { // Array ( [db_character]
-       $iduser = $user["id"];
-       $avatar = $_POST["avatar"];
+       $iduser = intval($user["id"]);
+       $avatar = mysql_real_escape_string($_POST["avatar"]);
 
 	   if ($_POST["dpath"] != "")
-			$dpath = $_POST["dpath"];
+			$dpath = mysql_real_escape_string($_POST["dpath"]);
 		else
 			$dpath = (!$user["dpath"]) ? DEFAULT_SKINPATH : $user["dpath"];
 
@@ -102,31 +102,31 @@ require_once dirname(__FILE__) .'/common.php';
        }
        // Nombre de usuario
        if (isset($_POST["db_character"]) && $_POST["db_character"] != '') {
-          $username = CheckInputStrings ( $_POST['db_character'] );
+          $username = EncodeText($_POST['db_character'],"2");
        } else {
           $username = $user['username'];
        }
        // Adresse e-Mail
        if (isset($_POST["db_email"]) && $_POST["db_email"] != '') {
-          $db_email = CheckInputStrings ( $_POST['db_email'] );
+          $db_email = mysql_real_escape_string($_POST['db_email']);
        } else {
           $db_email = $user['email'];
        }
        // Cantidad de sondas de espionaje
        if (isset($_POST["spio_anz"]) && is_numeric($_POST["spio_anz"])) {
-          $spio_anz = $_POST["spio_anz"];
+          $spio_anz = intval($_POST["spio_anz"]);
        } else {
           $spio_anz = "1";
        }
        // Mostrar tooltip durante
        if (isset($_POST["settings_tooltiptime"]) && is_numeric($_POST["settings_tooltiptime"])) {
-          $settings_tooltiptime = $_POST["settings_tooltiptime"];
+          $settings_tooltiptime = intval($_POST["settings_tooltiptime"]);
        } else {
           $settings_tooltiptime = "1";
        }
        // Maximo mensajes de flotas
        if (isset($_POST["settings_fleetactions"]) && is_numeric($_POST["settings_fleetactions"])) {
-          $settings_fleetactions = $_POST["settings_fleetactions"];
+          $settings_fleetactions = intval($_POST["settings_fleetactions"]);
        } else {
           $settings_fleetactions = "1";
        } //
@@ -249,7 +249,7 @@ require_once dirname(__FILE__) .'/common.php';
           }
        }
        if ($user['username'] != $_POST["db_character"]) {
-          $query = doquery("SELECT id FROM {{table}} WHERE username='{$_POST["db_character"]}'", 'users', true);
+          $query = doquery("SELECT id FROM {{table}} WHERE username='{$username}'", 'users', true);
           if (!$query) {
              doquery("UPDATE {{table}} SET username='{$username}' WHERE id='{$user['id']}' LIMIT 1", "users");
              setcookie(COOKIE_NAME, "", time()-100000, "/", "", 0); //le da el expire

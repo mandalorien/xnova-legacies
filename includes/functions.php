@@ -51,6 +51,29 @@ function check_urlaubmodus_time () {
 
 // ----------------------------------------------------------------------------------------------------------------
 //
+// Sécurisation
+//
+function EncodeText($text,$mode)
+{
+	if($mode=="1") # mode lecture
+	{
+		$newtext = stripslashes($text);
+		
+	}
+	elseif($mode=="2") # mode ecriture
+	{
+		$newtext = htmlentities($text,ENT_QUOTES,'UTF-8');
+	}
+	elseif($mode==null or $mode=="")
+	{
+		$newtext = stripslashes($text);
+	}
+	return $newtext;
+}
+
+
+// ----------------------------------------------------------------------------------------------------------------
+//
 // Routine Test de validit� d'une adresse email
 //
 function is_email($email) {

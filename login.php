@@ -38,8 +38,8 @@ includeLang('login');
 
 if (!empty($_POST)) {
     $userData = array(
-        'username' => mysql_real_escape_string($_POST['username']),
-        'password' => mysql_real_escape_string($_POST['password'])
+        'username' => EncodeText($_POST['username'],"2"),
+        'password' => $_POST['password']
     );
     $sql =<<<EOF
 SELECT

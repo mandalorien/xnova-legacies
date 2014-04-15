@@ -21,7 +21,7 @@ require_once dirname(__FILE__) .'/common.php';
     $parse['tps_seconds'] = $second; // On indique au script le nombre de secondes pour le compte à rebours
     
     setcookie($game_config['COOKIE_NAME'], "", time()-100000, "/", "", 0);
-
+	session_destroy();
     $page = parsetemplate(gettemplate('logout'), $parse);
     
     header("Refresh: ".$second."; Url = login.php");

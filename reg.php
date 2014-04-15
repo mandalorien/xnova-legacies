@@ -122,13 +122,13 @@ if (!$_POST['secu'] || $_POST['secu'] != $_SESSION['secu'] ) { $errorlist .= $la
         $errors++;
     }
     // Le meilleur moyen de voir si un nom d'utilisateur est pris c'est d'essayer de l'appeler !!
-    $ExistUser = doquery("SELECT `username` FROM {{table}} WHERE `username` = '" . mysql_escape_string($_POST['character']) . "' LIMIT 1;", 'users', true);
+    $ExistUser = doquery("SELECT `username` FROM {{table}} WHERE `username` = '" . EncodeText($_POST['character'],"2") . "' LIMIT 1;", 'users', true);
     if ($ExistUser) {
         $errorlist .= $lang['error_userexist'];
         $errors++;
     }
     // Si l'on verifiait que l'adresse email n'existe pas encore ???
-    $ExistMail = doquery("SELECT `email` FROM {{table}} WHERE `email` = '" . mysql_escape_string($_POST['email']) . "' LIMIT 1;", 'users', true);
+    $ExistMail = doquery("SELECT `email` FROM {{table}} WHERE `email` = '" . mysql_real_escape_string($_POST['email']) . "' LIMIT 1;", 'users', true);
     if ($ExistMail) {
         $errorlist .= $lang['error_emailexist'];
         $errors++;
@@ -142,25 +142,25 @@ if (!$_POST['secu'] || $_POST['secu'] != $_SESSION['secu'] ) { $errorlist .= $la
     if ($errors != 0) {
         message ($errorlist, $lang['Register']);
     } else {
-        $newpass = $_POST['passwrd'];
-        $UserName = CheckInputStrings ($_POST['character']);
-        $UserEmail = CheckInputStrings ($_POST['email']);
-        $UserPlanet = CheckInputStrings (addslashes($_POST['planet']));
+        $newpass = mysql_real_escape_string($_POST['passwrd']);
+        $UserName = EncodeText($_POST['character'],"2");
+        $UserEmail = mysql_real_escape_string($_POST['email']);
+        $UserPlanet = EncodeText($_POST['planet'],"2");
 
         $md5newpass = md5($newpass);
         // Creation de l'utilisateur
         $QryInsertUser = "INSERT INTO {{table}} SET ";
-        $QryInsertUser .= "`username` = '" . mysql_escape_string(strip_tags($UserName)) . "', ";
-        $QryInsertUser .= "`email` = '" . mysql_escape_string($UserEmail) . "', ";
-        $QryInsertUser .= "`email_2` = '" . mysql_escape_string($UserEmail) . "', ";
-        $QryInsertUser .= "`sex` = '" . mysql_escape_string($_POST['sex']) . "', ";
+        $QryInsertUser .= "`username` = '" . $UserName . "', ";
+        $QryInsertUser .= "`email` = '" . $UserEmail . "', ";
+        $QryInsertUser .= "`email_2` = '" . $UserEmail . "', ";
+        $QryInsertUser .= "`sex` = '" . mysql_real_escape_string($_POST['sex']) . "', ";
 		$QryInsertUser .= "`ip_at_reg` = '" . $_SERVER["REMOTE_ADDR"] . "', ";
         $QryInsertUser .= "`id_planet` = '0', ";
         $QryInsertUser .= "`register_time` = '" . time() . "', ";
         $QryInsertUser .= "`password`='" . $md5newpass . "';";
         doquery($QryInsertUser, 'users');
         // On cherche le numero d'enregistrement de l'utilisateur fraichement cree
-        $NewUser = doquery("SELECT `id` FROM {{table}} WHERE `username` = '" . mysql_escape_string($_POST['character']) . "' LIMIT 1;", 'users', true);
+        $NewUser = doquery("SELECT `id` FROM {{table}} WHERE `username` = '" . $UserName . "' LIMIT 1;", 'users', true);
         $iduser = $NewUser['id'];
         // Recherche d'une place libre !
         $LastSettedGalaxyPos = $game_config['LastSettedGalaxyPos'];
@@ -246,9 +246,9 @@ if (!$_POST['secu'] || $_POST['secu'] != $_SESSION['secu'] ) { $errorlist .= $la
 
         $Message = $lang['thanksforregistry'];
         if (sendpassemail($_POST['email'], "$newpass")) {
-            $Message .= " (" . htmlentities($_POST["email"]) . ")";
+            $Message .= " (" . EncodeText($_POST["email"],"2") . ")";
         } else {
-            $Message .= " (" . htmlentities($_POST["email"]) . ")";
+            $Message .= " (" . EncodeText($_POST["email"],"2") . ")";
             $Message .= "<br><br>" . $lang['error_mailsend'] . " <b>" . $newpass . "</b>";
         }
         message($Message, $lang['reg_welldone']);
