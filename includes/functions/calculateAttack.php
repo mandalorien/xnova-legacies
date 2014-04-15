@@ -167,7 +167,7 @@
 							
 							if($defArray[$fleetID][$element]['shield'] > $attacker_moc) #si la coque du defenseur est plus grand que la puissance de l'attaquant
 							{							
-								$coque = $defArray[$fleetID][$element]['shield'] - $attaquant_puissance;
+								$coque = $defArray[$fleetID][$element]['shield'] - $attacker_moc;
 								$calc = $coque/$defArray[$fleetID][$element]['shield'];
 								if($calc>=1)
 								{
@@ -194,7 +194,6 @@
             }
 		}
 
-			// CALCUL DES PERTES !!!
             $attacker_n = array();
             $attacker_shield = 0;
             foreach ($attackers as $fleetID => $attacker) {
@@ -266,7 +265,6 @@
 									{
 										if($pourcentage < 100*(1 - ( 1 / $CombatCaps[$element]['sd'][$c])))
 										{
-											var_dump($defenseAmount[$fleetID2]);
 											if ($defenseAmount[$fleetID2] > 0)
 											{
 												$attacker_moc = $amount * $attackDamage['total'] / $defenseAmount[$fleetID2];#la puissance de l'attaquant
