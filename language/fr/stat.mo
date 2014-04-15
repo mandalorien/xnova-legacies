@@ -40,6 +40,8 @@ $lang['stat_fleet']    = "Flotte";
 $lang['stat_research'] = "Recherches";
 $lang['stat_building'] = "Batiment";
 $lang['stat_defenses'] = "Defense";
+$lang['stat_pertes'] = "Pertes";
+
 
 $lang['Position']      = "Place";
 $lang['Difference']    = "Diff.";

@@ -57,6 +57,7 @@ require_once dirname(__FILE__) .'/common.php';
 	$parse['type']  .= "<option value=\"3\"". (($type == "3") ? " SELECTED" : "") .">". ucfirst($lang['stat_research'])."</option>";
 	$parse['type']  .= "<option value=\"4\"". (($type == "4") ? " SELECTED" : "") .">". ucfirst($lang['stat_building'])."</option>";
 	$parse['type']  .= "<option value=\"5\"". (($type == "5") ? " SELECTED" : "") .">". ucfirst($lang['stat_defenses'])."</option>";
+	$parse['type']  .= "<option value=\"6\"". (($type == "6") ? " SELECTED" : "") .">". ucfirst($lang['stat_pertes'])."</option>";
 
 	if       ($type == 1) {
 		$Order   = "total_points";
@@ -88,6 +89,12 @@ require_once dirname(__FILE__) .'/common.php';
 		$Counts  = "defs_count";
 		$Rank    = "defs_rank";
 		$OldRank = "defs_old_rank";
+	} elseif ($type == 6) {
+		$Order   = "pertes_points";
+		$Points  = "pertes_points";
+		$Counts  = "pertes_count";
+		$Rank    = "pertes_rank";
+		$OldRank = "pertes_old_rank";
 	}
 
 	if ($who == 2) {
@@ -198,15 +205,15 @@ $retraitAdmin = "";
 				$parse['player_rankplus'] = "<font color=\"green\">+".$ranking."</font>";
 			}
 			if ($UsrRow['id'] == $user['id']) {
-				$parse['player_name']     = "<font color=\"lime\">".$UsrRow['username']."</font>";
+				$parse['player_name']     = "<font color=\"lime\">".EncodeText($UsrRow['username'],"1")."</font>";
 			} else {
 				$parse['player_name']     = $UsrRow['username'];
 			}
 			$parse['player_mes']      = "<a href=\"messages.php?mode=write&id=" . $UsrRow['id'] . "\"><img src=\"" . $dpath . "img/m.gif\" border=\"0\" alt=\"". ucfirst($lang['Ecrire'])."\" /></a>";
 			if ($UsrRow['ally_name'] == $user['ally_name']) {
-				$parse['player_alliance'] = "<font color=\"#33CCFF\">".$UsrRow['ally_name']."</font>";
+				$parse['player_alliance'] = "<font color=\"#33CCFF\">".EncodeText($UsrRow['ally_name'],"1")."</font>";
 			} else {
-				$parse['player_alliance'] = $UsrRow['ally_name'];
+				$parse['player_alliance'] = EncodeText($UsrRow['ally_name'],"1");
 			}
 			$parse['player_points']   = pretty_number( $StatRow[ $Order ] );
 			$parse['stat_values']    .= parsetemplate(gettemplate('stat_playertable'), $parse);

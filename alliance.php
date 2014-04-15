@@ -194,34 +194,35 @@ if ($user['ally_id'] == 0) { // Sin alianza
 			if (!$_POST['aname']) {
 				message($lang['have_not_name'], $lang['make_alliance']);
 			}
-			$_POST['aname']=addslashes($_POST['aname']);
-      $_POST['atag']=addslashes($_POST['atag']);
-
-			$tagquery = doquery("SELECT * FROM {{table}} WHERE ally_tag='{$_POST['atag']}'", 'alliance', true);
-
-			if ($tagquery) {
-				message(str_replace('%s', $_POST['atag'], $lang['always_exist']), $lang['make_alliance']);
+			if($_POST['atag'] == "authlevel")
+			{
+				message("eviter de tricher","erreur");
 			}
 
-			doquery("INSERT INTO {{table}} SET
-			`ally_name`='{$_POST['aname']}',
-			`ally_tag`='{$_POST['atag']}' ,
-			`ally_owner`='{$user['id']}',
-			`ally_owner_range`='Leader',
-			`ally_members`='1',
-			`ally_register_time`=" . time() , "alliance");
+			if($_POST['aname'] == "authlevel")
+			{
+				message("eviter de tricher","erreur");
+			}
+            $atagnewname = EncodeText($_POST['atag'],"2");
+            $anamenewname = EncodeText($_POST['aname'],"2");			
+			
+			$tagquery = doquery("SELECT * FROM {{table}} WHERE ally_tag='".$atagnewname."'", 'alliance', true);
 
-			$allyquery = doquery("SELECT * FROM {{table}} WHERE ally_tag='{$_POST['atag']}'", 'alliance', true);
+			if ($tagquery) {
+				message(str_replace('%s', $atagnewname, $lang['always_exist']), $lang['make_alliance']);
+			}
+			
+			$query = doquery("INSERT INTO {{table}}(ally_name, ally_tag, ally_owner,ally_owner_range,ally_members,ally_register_time) VALUES ('".$anamenewname."', '".$atagnewname."','".$user['id']."','Leader','1','".time()."')", "alliance");
 
-			doquery("UPDATE {{table}} SET
-			`ally_id`='{$allyquery['id']}',
-			`ally_name`='{$allyquery['ally_name']}',
-			`ally_register_time`='" . time() . "'
-			WHERE `id`='{$user['id']}'", "users");
+			var_dump($atagnewname);
+			var_dump($anamenewname);
+			$tagquery = doquery("SELECT * FROM {{table}} WHERE ally_tag='".$atagnewname."'", 'alliance', true);
 
-			$page = MessageForm(str_replace('%s', $_POST['atag'], $lang['ally_maked']),
+			doquery("UPDATE {{table}} SET `ally_id`='" . $tagquery['id'] . "', ally_name='" . $tagquery['ally_name'] . "', ally_register_time='" . time() . "' WHERE `id`='" . $user['id'] . "'", "users");
 
-				str_replace('%s', $_POST['atag'], $lang['alliance_has_been_maked']) . "<br><br>", "", $lang['Ok']);
+			$page = MessageForm(str_replace('%s',stripslashes($atagnewname), $lang['ally_maked']),
+
+			str_replace('%s',stripslashes($atagnewname), $lang['alliance_has_been_maked']) . "<br><br>", "", $lang['Ok']);
 		} else {
 			$page .= parsetemplate(gettemplate('alliance_make'), $lang);
 		}
@@ -229,6 +230,7 @@ if ($user['ally_id'] == 0) { // Sin alianza
 		display($page, $lang['make_alliance']);
 	}
 
+	//mode cherche alliance
 	if ($mode == 'search' && $user['ally_request'] == 0) { // search one
 
 		$parse = $lang;
@@ -244,7 +246,7 @@ if ($user['ally_id'] == 0) { // Sin alianza
 
 				while ($s = mysql_fetch_array($search)) {
 					$entry = array();
-					$entry['ally_tag'] = "[<a href=\"alliance.php?mode=apply&allyid={$s['id']}\">{$s['ally_tag']}</a>]";
+					$entry['ally_tag'] = "[<a href=\"". INDEX_BASE ."alliance&mode=apply&allyid={$s['id']}\">{$s['ally_tag']}</a>]";
 					$entry['ally_name'] = $s['ally_name'];
 					$entry['ally_members'] = $s['ally_members'];
 
@@ -274,7 +276,7 @@ if ($user['ally_id'] == 0) { // Sin alianza
 		if ($_POST['further'] == $lang['Send']) { // esta parte es igual que el buscador de search.php...
 			doquery("UPDATE {{table}} SET `ally_request`='" . intval($allyid) . "', ally_request_text='" . mysql_escape_string(strip_tags($_POST['text'])) . "', ally_register_time='" . time() . "' WHERE `id`='" . $user['id'] . "'", "users");
 			// mensaje de cuando se envia correctamente el mensaje
-			message($lang['apply_registered'], $lang['your_apply']);
+			message($lang['apply_registered'],$lang['your_apply']);
 			// mensaje de cuando falla el envio
 			// message($lang['apply_cantbeadded'], $lang['your_apply']);
 		} else {
@@ -282,6 +284,7 @@ if ($user['ally_id'] == 0) { // Sin alianza
 		}
 
 		$parse = $lang;
+		$parse['link'] = INDEX_BASE;
 		$parse['allyid'] = intval($_GET['allyid']);
 		$parse['chars_count'] = strlen($text_apply);
 		$parse['text_apply'] = $text_apply;

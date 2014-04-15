@@ -221,6 +221,14 @@ function MissionCaseAttack ($FleetRow)
 				}
 			}
 
+			/* calcule des pts pertes */
+			$tataperte = $result['lost']['def'] - $result['lost']['att'];
+            $QryUpdatePerte = "UPDATE {{table}} SET ";
+            $QryUpdatePerte .= "`p_infligees` =`p_infligees` + '".$tataperte."' ";
+            $QryUpdatePerte .= "WHERE id = '" . $FleetRow['fleet_owner'] . "' ";
+            $QryUpdatePerte .= "LIMIT 1 ;";
+            doquery($QryUpdatePerte, 'users');
+			
 			$FleetDebris      = $result['debree']['att'][0] + $result['debree']['def'][0] + $result['debree']['att'][1] + $result['debree']['def'][1];
 			$StrAttackerUnits = sprintf ($lang['sys_attacker_lostunits'], $result['lost']['att']);
 			$StrDefenderUnits = sprintf ($lang['sys_defender_lostunits'], $result['lost']['def']);

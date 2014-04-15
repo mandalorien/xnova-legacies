@@ -59,8 +59,8 @@
 	// Table alliance
 	$QryTableAlliance    = "CREATE TABLE `{{table}}` ( ";
 	$QryTableAlliance   .= "`id` bigint(11) NOT NULL auto_increment, ";
-	$QryTableAlliance   .= "`ally_name` varchar(32) character set latin1 default '', ";
-	$QryTableAlliance   .= "`ally_tag` varchar(8) character set latin1 default '', ";
+	$QryTableAlliance   .= "`ally_name` varchar(255) character set latin1 default '', ";
+	$QryTableAlliance   .= "`ally_tag` varchar(255) character set latin1 default '', ";
 	$QryTableAlliance   .= "`ally_owner` int(11) NOT NULL default '0', ";
 	$QryTableAlliance   .= "`ally_register_time` int(11) NOT NULL default '0', ";
 	$QryTableAlliance   .= "`ally_description` text character set latin1, ";
@@ -419,6 +419,10 @@
 	$QryTableStatPoints .= "`fleet_old_rank` int(11) NOT NULL, ";
 	$QryTableStatPoints .= "`fleet_points` bigint(20) NOT NULL, ";
 	$QryTableStatPoints .= "`fleet_count` int(11) NOT NULL, ";
+	$QryTableStatPoints .= "`pertes_rank` int(11) NOT NULL, ";
+	$QryTableStatPoints .= "`pertes_old_rank` int(11) NOT NULL, ";
+	$QryTableStatPoints .= "`pertes_points` bigint(20) NOT NULL, ";
+	$QryTableStatPoints .= "`pertes_count` int(11) NOT NULL, ";
 	$QryTableStatPoints .= "`total_rank` int(11) NOT NULL, ";
 	$QryTableStatPoints .= "`total_old_rank` int(11) NOT NULL, ";
 	$QryTableStatPoints .= "`total_points` bigint(20) NOT NULL, ";

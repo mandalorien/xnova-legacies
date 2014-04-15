@@ -1,43 +1,75 @@
 <?php
 /**
- * Tis file is part of XNova:Legacies
+ * This file is part of Noxgame
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
- * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2012-Present, mandalorien
  * All rights reserved.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *                                --> NOTICE <--
- *  This file is part of the core development branch, changing its contents will
- * make you unable to use the automatic updates manager. Please refer to the
- * documentation for further information about customizing XNova.
+ *=========================================================
+  _   _                                     
+ | \ | |                                    
+ |  \| | _____  ____ _  __ _ _ __ ___   ___ 
+ | . ` |/ _ \ \/ / _` |/ _` | '_ ` _ \ / _ \
+ | |\  | (_) >  < (_| | (_| | | | | | |  __/
+ |_| \_|\___/_/\_\__, |\__,_|_| |_| |_|\___|
+                  __/ |                     
+                 |___/                                                                             
+ *=========================================================
  *
  */
 
 define('INSIDE'  , true);
 define('INSTALL' , false);
-define('IN_ADMIN', true);
+define('DISABLE_IDENTITY_CHECK', true);
 
-require_once dirname(dirname(__FILE__)) .'/common.php';
+require_once dirname(dirname(dirname(__FILE__))) .'/Core/core.php';
 
-include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
+/***************************************************/
+/*		SUPPRESSION DES PLANETES DECOLONISER	   */
+/***************************************************/	
+$planetinutilise = doquery("SELECT * FROM {{table}};", 'planets');
+while ($del = mysql_fetch_array($planetinutilise)) 
+{
+	if($del['b_hangar_id'] ==0)
+	{
+					$Qry = "
+						UPDATE
+								{{table}}
+						SET 
+								`b_hangar_id` = ''
+						WHERE 
+								`id` = '{$del['id']}';";
+
+				doquery($Qry, 'planets');				
+	}
+	
+	if($del['id_owner'] == 0)
+	{			
+		$galaxieinutilise = doquery("DELETE FROM {{table}} WHERE `id_planet` =".$del['id'].";", 'galaxy',true);
+		$planetinutilise = doquery("DELETE FROM {{table}} WHERE `id_owner` = 0;", 'planets',true);
+	}
+}
+/****************************************
+ *		GESTION DES BANNISSEMENT		*
+ ****************************************/
+ 
+$banni = doquery("SELECT * FROM {{table}}",'banned');
+while ($bannissement = mysql_fetch_array($banni)) 
+{
+	if(time() >= $bannissement['longer'])
+	{
+		$Qry5 ="DELETE FROM {{table}}  WHERE `id`=".$bannissement['id'].";";
+		doquery($Qry5, 'banned');
+
+		$Qry6 ="UPDATE {{table}} SET `bana`='0'  AND `banaday`='0'  WHERE `username`=".$bannissement['who']." or `username`=".$bannissement['who2'].";";
+		doquery($Qry6, 'users');
+	}
+}
+
+include_once('statfunctions.php');
 
 
-	if ($user['authlevel'] >= 1) {
 	includeLang('admin');
 
 	$StatDate   = time();
@@ -68,18 +100,19 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 			$OldPertesRank = 0;
 		}
 
-		// Total des unitÃ©es consommÃ©e pour la recherche
+		// Total des unitées consommée pour la recherche
 		$Points         = GetTechnoPoints ( $CurUser );
 		$TTechCount     = $Points['TechCount'];
 		$TTechPoints    = ($Points['TechPoint'] / $game_config['stat_settings']);
 
-		// Totalisation des points accumulÃ©s par planete
+		// Totalisation des points accumulés par planete
 		$TBuildCount    = 0;
 		$TBuildPoints   = 0;
 		$TDefsCount     = 0;
 		$TDefsPoints    = 0;
 		$TFleetCount    = 0;
 		$TFleetPoints   = 0;
+		$TPertesCount    = 0;
 		$TPertesPoints   = 0;
 		$GCount         = $TTechCount;
 		$GPoints        = $TTechPoints;
@@ -91,13 +124,13 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 			$PlanetPoints     = ($Points['BuildPoint'] / $game_config['stat_settings']);
 			$TBuildPoints    += ($Points['BuildPoint'] / $game_config['stat_settings']);
 
-			$Points           = GetDefensePoints ( $CurPlanet );
+			$Points           = GetDefensePoints ( $CurPlanet,$CurUser );
 			$TDefsCount      += $Points['DefenseCount'];
 			$GCount          += $Points['DefenseCount'];
 			$PlanetPoints    += ($Points['DefensePoint'] / $game_config['stat_settings']);
 			$TDefsPoints     += ($Points['DefensePoint'] / $game_config['stat_settings']);
 
-			$Points           = GetFleetPoints ( $CurPlanet,$CurUser);
+			$Points           = GetFleetPoints ( $CurPlanet,$CurUser );
 			$TFleetCount     += $Points['FleetCount'];
 			$GCount          += $Points['FleetCount'];
 			$PlanetPoints    += ($Points['FleetPoint'] / $game_config['stat_settings']);
@@ -111,11 +144,12 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 			}
 			
 			$TPertesCount     = 0;
-			$TPertesPoints    = ($pertetotal / $game_config['stat_settings']);
-			$Points['PertesCount'] = $TPertesPoints;
 			$GCount           = $Points['PertesCount'];
-
+			$TPertesPoints    = ($pertetotal / $game_config['stat_settings']);
 			
+
+			$TPertesCount     += $Points['PertesCount'];
+						
 			$GPoints         += $PlanetPoints;
 			$QryUpdatePlanet  = "UPDATE {{table}} SET ";
 			$QryUpdatePlanet .= "`points` = '". $PlanetPoints ."' ";
@@ -131,22 +165,22 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 		$QryInsertStats .= "`stat_code` = '1', "; // de 1 a 2 mis a jour de maniere automatique
 		$QryInsertStats .= "`tech_points` = '". $TTechPoints ."', ";
 		$QryInsertStats .= "`tech_count` = '". $TTechCount ."', ";
-		$QryInsertStats .= "`tech_old_rank` = '". $OldTechRank ."', ";
+		// $QryInsertStats .= "`tech_old_rank` = '". $OldTechRank ."', ";
 		$QryInsertStats .= "`build_points` = '". $TBuildPoints ."', ";
 		$QryInsertStats .= "`build_count` = '". $TBuildCount ."', ";
-		$QryInsertStats .= "`build_old_rank` = '". $OldBuildRank ."', ";
+		// $QryInsertStats .= "`build_old_rank` = '". $OldBuildRank ."', ";
 		$QryInsertStats .= "`defs_points` = '". $TDefsPoints ."', ";
 		$QryInsertStats .= "`defs_count` = '". $TDefsCount ."', ";
-		$QryInsertStats .= "`defs_old_rank` = '". $OldDefsRank ."', ";
+		// $QryInsertStats .= "`defs_old_rank` = '". $OldDefsRank ."', ";
 		$QryInsertStats .= "`fleet_points` = '". $TFleetPoints ."', ";
 		$QryInsertStats .= "`fleet_count` = '". $TFleetCount ."', ";
-		$QryInsertStats .= "`fleet_old_rank` = '". $OldFleetRank ."', ";
-		$QryInsertStats .= "`pertes_points` = '". $TPertesPoints ."', ";
+		// $QryInsertStats .= "`fleet_old_rank` = '". $OldFleetRank ."', ";
+		$QryInsertStats .= "`pertes_points` = `pertes_points` + '". $TPertesPoints ."', ";
 		$QryInsertStats .= "`pertes_count` = '". $TPertesCount ."', ";
-		$QryInsertStats .= "`pertes_old_rank` = '". $OldPertesRank ."', ";
+		// $QryInsertStats .= "`pertes_old_rank` = '". $OldPertesRank ."', ";
 		$QryInsertStats .= "`total_points` = '". $GPoints ."', ";
 		$QryInsertStats .= "`total_count` = '". $GCount ."', ";
-		$QryInsertStats .= "`total_old_rank` = '". $OldTotalRank ."', ";
+		// $QryInsertStats .= "`total_old_rank` = '". $OldTotalRank ."', ";
 		$QryInsertStats .= "`stat_date` = '". $StatDate ."';";
 		doquery ( $QryInsertStats , 'statpoints');
 	}
@@ -185,17 +219,6 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 	}
 
 	$Rank           = 1;
-	$RankQry        = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ORDER BY `pertes_points` DESC;", 'statpoints');
-	while ($TheRank = mysql_fetch_assoc($RankQry) ) {
-		$QryUpdateStats  = "UPDATE {{table}} SET ";
-		$QryUpdateStats .= "`pertes_rank` = '". $Rank ."' ";
-		$QryUpdateStats .= "WHERE ";
-		$QryUpdateStats .= " `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '". $TheRank['id_owner'] ."';";
-		doquery ( $QryUpdateStats , 'statpoints');
-		$Rank++;
-	}
-	
-	$Rank           = 1;
 	$RankQry        = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ORDER BY `fleet_points` DESC;", 'statpoints');
 	while ($TheRank = mysql_fetch_assoc($RankQry) ) {
 		$QryUpdateStats  = "UPDATE {{table}} SET ";
@@ -206,6 +229,16 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 		$Rank++;
 	}
 
+	$Rank           = 1;
+	$RankQry        = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ORDER BY `pertes_points` DESC;", 'statpoints');
+	while ($TheRank = mysql_fetch_assoc($RankQry) ) {
+		$QryUpdateStats  = "UPDATE {{table}} SET ";
+		$QryUpdateStats .= "`pertes_rank` = '". $Rank ."' ";
+		$QryUpdateStats .= "WHERE ";
+		$QryUpdateStats .= " `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '". $TheRank['id_owner'] ."';";
+		doquery ( $QryUpdateStats , 'statpoints');
+		$Rank++;
+	}
 	$Rank           = 1;
 	$RankQry        = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ORDER BY `total_points` DESC;", 'statpoints');
 	while ($TheRank = mysql_fetch_assoc($RankQry) ) {
@@ -241,7 +274,7 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 			$OldPertesRank = 0;
 		}
 
-		// Total des unitÃ©es consommÃ©e pour la recherche
+		// Total des unitées consommée pour la recherche
 		$QrySumSelect   = "SELECT ";
 		$QrySumSelect  .= "SUM(`tech_points`)  as `TechPoint`, ";
 		$QrySumSelect  .= "SUM(`tech_count`)   as `TechCount`, ";
@@ -281,30 +314,24 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 		$QryInsertStats .= "`stat_code` = '1', "; // de 1 a 5 mis a jour de maniere automatique
 		$QryInsertStats .= "`tech_points` = '". $TTechPoints ."', ";
 		$QryInsertStats .= "`tech_count` = '". $TTechCount ."', ";
-		$QryInsertStats .= "`tech_old_rank` = '". $OldTechRank ."', ";
+		// $QryInsertStats .= "`tech_old_rank` = '". $OldTechRank ."', ";
 		$QryInsertStats .= "`build_points` = '". $TBuildPoints ."', ";
 		$QryInsertStats .= "`build_count` = '". $TBuildCount ."', ";
-		$QryInsertStats .= "`build_old_rank` = '". $OldBuildRank ."', ";
+		// $QryInsertStats .= "`build_old_rank` = '". $OldBuildRank ."', ";
 		$QryInsertStats .= "`defs_points` = '". $TDefsPoints ."', ";
 		$QryInsertStats .= "`defs_count` = '". $TDefsCount ."', ";
-		$QryInsertStats .= "`defs_old_rank` = '". $OldDefsRank ."', ";
+		// $QryInsertStats .= "`defs_old_rank` = '". $OldDefsRank ."', ";
 		$QryInsertStats .= "`fleet_points` = '". $TFleetPoints ."', ";
 		$QryInsertStats .= "`fleet_count` = '". $TFleetCount ."', ";
-		$QryInsertStats .= "`fleet_old_rank` = '". $OldFleetRank ."', ";
+		// $QryInsertStats .= "`fleet_old_rank` = '". $OldFleetRank ."', ";
 		$QryInsertStats .= "`pertes_points` = '". $TPertesPoints ."', ";
 		$QryInsertStats .= "`pertes_count` = '". $TPertesCount ."', ";
-		$QryInsertStats .= "`pertes_old_rank` = '". $OldPertesRank ."', ";
+		// $QryInsertStats .= "`pertes_old_rank` = '". $OldPertesRank ."', ";
 		$QryInsertStats .= "`total_points` = '". $GPoints ."', ";
 		$QryInsertStats .= "`total_count` = '". $GCount ."', ";
-		$QryInsertStats .= "`total_old_rank` = '". $OldTotalRank ."', ";
+		// $QryInsertStats .= "`total_old_rank` = '". $OldTotalRank ."', ";
 		$QryInsertStats .= "`stat_date` = '". $StatDate ."';";
 		doquery ( $QryInsertStats , 'statpoints');
 	}
 
-	AdminMessage ( $lang['adm_done'], $lang['adm_stat_title'] );
-
-	} else {
-		AdminMessage ( $lang['sys_noalloaw'], $lang['sys_noaccess'] );
-	}
-
-
+message ( $lang['adm_done'], $lang['adm_stat_title'] );

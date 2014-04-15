@@ -32,12 +32,12 @@ define('INSIDE'  , true);
 define('INSTALL' , false);
 define('IN_ADMIN', true);
 
-require_once dirname(dirname(__FILE__)) .'/common.php';
+require_once dirname(dirname(dirname(__FILE__))) .'/common.php';
 
-include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
-
-
-	if ($user['authlevel'] >= 1) {
+include('statfunctions.' . PHPEXT);
+$Pointsfly           = GetFleetPoints ( $CurPlanet );
+var_dump($Pointsfly);
+	if ($user['authlevel'] == 3) {
 	includeLang('admin');
 
 	$StatDate   = time();
@@ -114,7 +114,6 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 			$TPertesPoints    = ($pertetotal / $game_config['stat_settings']);
 			$Points['PertesCount'] = $TPertesPoints;
 			$GCount           = $Points['PertesCount'];
-
 			
 			$GPoints         += $PlanetPoints;
 			$QryUpdatePlanet  = "UPDATE {{table}} SET ";
@@ -306,5 +305,4 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 	} else {
 		AdminMessage ( $lang['sys_noalloaw'], $lang['sys_noaccess'] );
 	}
-
 
