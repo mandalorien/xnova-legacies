@@ -78,21 +78,21 @@ function ShowTopNavigationBar ( $CurrentUser, $CurrentPlanet ) {
 		}
 		// Metal
 		$metal = pretty_number($CurrentPlanet["metal"]);
-		if (($CurrentPlanet["metal"] > $CurrentPlanet["metal_max"])) {
+		if (($CurrentPlanet["metal"] > $CurrentPlanet["metal_max"]     * MAX_OVERFLOW)) {
 			$parse['metal'] = colorRed($metal);
 		} else {
 			$parse['metal'] = $metal;
 		}
 		// Cristal
 		$crystal = pretty_number($CurrentPlanet["crystal"]);
-		if (($CurrentPlanet["crystal"] > $CurrentPlanet["crystal_max"])) {
+		if (($CurrentPlanet["crystal"] > $CurrentPlanet["crystal_max"]     * MAX_OVERFLOW)) {
 			$parse['crystal'] = colorRed($crystal);
 		} else {
 			$parse['crystal'] = $crystal;
 		}
 		// Deuterium
 		$deuterium = pretty_number($CurrentPlanet["deuterium"]);
-		if (($CurrentPlanet["deuterium"] > $CurrentPlanet["deuterium_max"])) {
+		if (($CurrentPlanet["deuterium"] > $CurrentPlanet["deuterium_max"]     * MAX_OVERFLOW)) {
 			$parse['deuterium'] = colorRed($deuterium);
 		} else {
 			$parse['deuterium'] = $deuterium;
