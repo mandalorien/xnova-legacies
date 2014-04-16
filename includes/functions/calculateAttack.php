@@ -264,7 +264,7 @@
                     foreach($attacker['detail'] as $element => $amount) {
                         if ($amount > 0) {
                             foreach ($CombatCaps[$element]['sd'] as $c => $d) {
-								if($defender['def'][$c]!='0' || $defender['def'][$c]!=null)
+								if(isset($defender['def'][$c]))
 								{
 									if($d > 1) {
 										$rapidfire = true;
@@ -279,7 +279,7 @@
 								$randDecimal = rand(0,99);
 								$pourcentage = $randEntier + ($randDecimal / 100);
 								foreach ($CombatCaps[$element]['sd'] as $c => $d) {
-									if($defender['def'][$c]!='0' || $defender['def'][$c]!=null)
+									if(isset($defender['def'][$c]))
 									{
 										if($pourcentage < 100*(1 - ( 1 / $CombatCaps[$element]['sd'][$c])))
 										{
@@ -299,7 +299,7 @@
 
 													$RFRShipDef = round(($calc) * $defenseAmount[$fleetID2]);
 													$enleDEF = ($defenseAmount[$fleetID2] - $RFRShipDef);
-													$defenseAmount[$fleetID2] -= $RFRShipDef - $enleDEF;
+													$defender_n[$fleetID2][$c] -= $RFRShipDef - $enleDEF;
 													if ($defender_n[$fleetID2][$c] <= 0) {
 															$defender_n[$fleetID2][$c] = 0;
 													}
@@ -358,7 +358,7 @@
 
 													$RFRShipAtt = round(($calc) * $attackAmount[$fleetID2]);
 													$enleATT = ($attackAmount[$fleetID2] - $RFRShipAtt);
-													$attackAmount[$fleetID2] -= $RFRShipAtt - $enleATT;
+													$attacker_n[$fleetID2][$c] -= $RFRShipAtt - $enleATT;
 													if ($attacker_n[$fleetID2][$c] <= 0) {
 															$attacker_n[$fleetID2][$c] = 0;
 													}
