@@ -30,6 +30,7 @@
 
 session_start();
 ini_set('display_errors', false);
+ini_set('date.timezone','Europe/Paris'); # fuseau horaire de paris
 
 define('ROOT_PATH', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 define('PHPEXT', require 'extension.inc');
