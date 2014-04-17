@@ -23,7 +23,7 @@ define('INSIDE'  , true);
 define('INSTALL' , false);
 define('DISABLE_IDENTITY_CHECK', true);
 
-require_once dirname(dirname(dirname(__FILE__))) .'/Core/core.php';
+require_once dirname(dirname(dirname(__FILE__))) .'/common.php';
 
 /***************************************************/
 /*		SUPPRESSION DES PLANETES DECOLONISER	   */
