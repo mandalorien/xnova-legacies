@@ -34,8 +34,6 @@ ini_set('display_errors', false);
 define('ROOT_PATH', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 define('PHPEXT', require 'extension.inc');
 
-define('VERSION', '2009.2.1');
-
 $RequestUrl = substr($_SERVER['REQUEST_URI'], 0);
 $fragment = explode ("/",$RequestUrl);
 $var = count($fragment);
@@ -71,6 +69,9 @@ define('DEFAULT_SKINPATH',WEB_URL .'skins/xnova/');
 define('TEMPLATE_DIR', realpath(ROOT_PATH . '/templates/'));
 define('TEMPLATE_NAME', 'OpenGame');
 define('DEFAULT_LANG', 'fr');
+
+include(ROOT_PATH . 'version.' . PHPEXT);
+include(ROOT_PATH . 'includes/update.'.PHPEXT);
 
 include(ROOT_PATH . 'includes/debug.class.'.PHPEXT);
 $debug = new Debug();
