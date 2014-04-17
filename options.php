@@ -213,8 +213,8 @@ require_once dirname(__FILE__) .'/common.php';
        } else {
           $db_deaktjava = "0";
        }
-       $SetSort  = $_POST['settings_sort'];
-       $SetOrder = $_POST['settings_order'];
+       $SetSort  = mysql_real_escape_string($_POST['settings_sort']);
+       $SetOrder = mysql_real_escape_string($_POST['settings_order']);
 
        doquery("UPDATE {{table}} SET
        `email` = '$db_email',
