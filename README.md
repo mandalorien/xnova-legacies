@@ -8,6 +8,7 @@ Xnova
 - Chef Programmeur : _Chlorel_
 - Designer / Programmeur : _e-Zobar_
 - Webmaster : _Flousedid_
+- Dieu : NOUS :D
 	
 ---
 
