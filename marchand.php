@@ -136,7 +136,7 @@ function ModuleMarchand ( $CurrentUser, &$CurrentPlanet ) {
 					$parse['mod_ma_res_b'] = "2";
 					$parse['mod_ma_res_a'] = "0.5";
 					break;
-				case 'deuterium':
+				case 'deut':
 					$PageTPL = gettemplate('marchand_deuterium');
 					$parse['mod_ma_res_b'] = "0.5";
 					$parse['mod_ma_res_a'] = "0.25";
