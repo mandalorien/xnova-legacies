@@ -244,7 +244,7 @@ if ($user['ally_id'] == 0) { // Sin alianza
 
 				while ($s = mysql_fetch_array($search)) {
 					$entry = array();
-					$entry['ally_tag'] = "[<a href=\"". INDEX_BASE ."alliance&mode=apply&allyid={$s['id']}\">{$s['ally_tag']}</a>]";
+					$entry['ally_tag'] = "[<a href=\"alliance&mode=apply&allyid={$s['id']}\">{$s['ally_tag']}</a>]";
 					$entry['ally_name'] = $s['ally_name'];
 					$entry['ally_members'] = $s['ally_members'];
 
@@ -282,7 +282,6 @@ if ($user['ally_id'] == 0) { // Sin alianza
 		}
 
 		$parse = $lang;
-		$parse['link'] = INDEX_BASE;
 		$parse['allyid'] = intval($_GET['allyid']);
 		$parse['chars_count'] = strlen($text_apply);
 		$parse['text_apply'] = $text_apply;
