@@ -48,20 +48,20 @@ $fleet = mysql_fetch_array($query);
 // If we got a message to add some1 to attack (MadnessRed code)
 if($_POST['add_member_to_aks'] == "madnessred"){
 $added_user_id_mr = 0;
-$member_qry_mr = doquery("SELECT `id` FROM {{table}} WHERE `username` ='".$_POST['addtogroup']."' ;",'users',true);
+$member_qry_mr = doquery("SELECT `id` FROM {{table}} WHERE `username` ='".EncodeText($_POST['addtogroup'],"2")."' ;",'users',true);
 $added_user_id_mr .= $member_qry_mr['id'];
 // var_dump($added_user_id_mr);
 if($added_user_id_mr > 0){
 $new_eingeladen_mr = intval($_POST['aks_invited_mr']).','.intval($added_user_id_mr);
 //var_dump($new_eingeladen_mr);
 doquery("UPDATE {{table}} SET `eingeladen` = '".$new_eingeladen_mr."' WHERE `id` =".$fleet['fleet_group']." LIMIT 1 ;",'aks') or die("Adding member to fleet: <br />".mysql_error());
-$add_user_message_mr = "<font color=\"lime\">".$lang['player_ag_title']." ".$_POST['addtogroup']."".$lang['add_attack_group']."";
+$add_user_message_mr = "<font color=\"lime\">".$lang['player_ag_title']." ".EncodeText($_POST['addtogroup'],"1")."".$lang['add_attack_group']."";
 // Send a message.
 $kvname = doquery("SELECT `name` FROM {{table}} WHERE `id` = '".$fleet['fleet_group']."' LIMIT 1 ;",'aks',true);
 $invite_message = $lang['player_ag_title']."".$user['username']."  ".$lang['your_invite'].":".$kvname['name']."";
 SendSimpleMessage ( $added_user_id_mr, $user['id'], time(), 1, $user['username'], "ACS Invitation", $invite_message);
 }else{
-$add_user_message_mr = "<font color=\"red\">Error. ".$lang['player_ag_title']." ".$_POST['addtogroup']."".$lang['doesnt_exist']."";
+$add_user_message_mr = "<font color=\"red\">Error. ".$lang['player_ag_title']." ".EncodeText($_POST['addtogroup'],"1")."".$lang['doesnt_exist']."";
 }
 }
 
@@ -284,7 +284,7 @@ $page .= '</select>
 
 <form action="verband.php" method="POST">
 <input type="hidden" name="add_member_to_aks" value="madnessred" />
-<input name="fleetid" value="'.$_POST['fleetid'].'" type="hidden">
+<input name="fleetid" value="'.intval($_POST['fleetid']).'" type="hidden">
 <input name="aks_invited_mr" value="'.$aks_invited_mr.'" type="hidden">
 <td><input name="addtogroup" type="text" /> <br /><input type="submit" value="OK" /></td>
 </form><br />'.$add_user_message_mr.'
