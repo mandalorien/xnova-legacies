@@ -34,17 +34,18 @@ require_once dirname(__FILE__) .'/common.php';
 
 $dpath = (!$userrow["dpath"]) ? DEFAULT_SKINPATH : $userrow["dpath"];
 
-
-if(!is_numeric($_GET["a"]) || !$_GET["a"] ){ message("Ung&uuml;ltige Allianz-ID","Fehler");}
+//si a n'est pas un numerique ou qu'il n'existe pas
+if(!is_numeric($_GET["a"]) || !$_GET["a"]){ message("qu'est ce que tu fait","erreur");}
 
 $allyrow = doquery("SELECT ally_name,ally_tag,ally_description,ally_web,ally_image FROM {{table}} WHERE id=".$_GET["a"],"alliance",true);
 
 if(!$allyrow){ message("Alliance non trouv&eacute;e","Erreur");}
 
 $count = doquery("SELECT COUNT(DISTINCT(id)) FROM {{table}} WHERE ally_id=".$_GET["a"].";","users",true);
+
 $ally_member_scount = $count[0];
 
-$page .="<table width=519><tr><td class=c colspan=2>Informations sur l'alliance</td></tr>";
+$page .="<table width=100%><tr><td class=c colspan=2>Informations sur l'alliance</td></tr>";
 
 	if($allyrow["ally_image"] != ""){
 		$page .= "<tr><th colspan=2><img src=\"".$allyrow["ally_image"]."\"></td></tr>";
@@ -65,7 +66,8 @@ $page .="<table width=519><tr><td class=c colspan=2>Informations sur l'alliance<
 	}
 	$page .= "</table>";
 
-	display($page,"Information sur l'alliance [".$allyrow["ally_name"]."]",false);
+	display($page,"Information sur l'alliance [".$allyrow["ally_name"]."]",true);
 
 // Created by Perberos. All rights reversed (C) 2006
+// Modifier by mandalorien All rights reversed (C) 2013
 ?>

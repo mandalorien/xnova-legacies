@@ -113,18 +113,10 @@ includeLang('alliance');
 
 if ($_GET['mode'] == 'ainfo') {
 	$a = intval($_GET['a']);
-	$tag = mysql_escape_string($_GET['tag']);
-	// Evitamos errores casuales xD
-	// query
+	$tag = EncodeText($_GET['tag'],"2");
 	$lang['Alliance_information'] = "Information Alliance";
 
-	if (isset($_GET['tag'])) {
-		$allyrow = doquery("SELECT * FROM {{table}} WHERE ally_tag='{$tag}'", "alliance", true);
-	} elseif (is_numeric($a) && $a != 0) {
-		$allyrow = doquery("SELECT * FROM {{table}} WHERE id='{$a}'", "alliance", true);
-	} else {
-      message("Cette alliance n'existe pas !", "Information Alliance (1)");
-	}
+	$allyrow = doquery("SELECT * FROM {{table}} WHERE id='{$a}' or ally_tag='{$tag}'", "alliance", true);
 	// Si no existe
 	if (!$allyrow) {
       message("Cette alliance n'existe pas !", "Information Alliance (1)");
@@ -168,14 +160,14 @@ if ($_GET['mode'] == 'ainfo') {
 	if ($user['ally_id'] == 0) {
 		$lang['bewerbung'] = "<tr>
 	  <th>Candidature</th>
-	  <th><a href=\"alliance.php?mode=apply&amp;allyid=" . $id . "\">Cliquer ici pour ecrire votre candidature</a></th>
+	  <th><a href=\"alliance&mode=apply&amp;allyid=" . $id . "\">Cliquer ici pour ecrire votre candidature</a></th>
 
 	</tr>";
 	} else
 		$lang['bewerbung'] = "Candidature";
 
 	$page .= parsetemplate(gettemplate('alliance_ainfo'), $lang);
-	display($page, str_replace('%s', $ally_name, $lang['Info_of_Alliance']));
+	display($page, str_replace('%s', $ally_name, $lang['Info_of_Alliance']),true);
 }
 // --[Comprobaciones de alianza]-------------------------
 if ($user['ally_id'] == 0) { // Sin alianza
