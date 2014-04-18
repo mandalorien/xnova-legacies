@@ -224,21 +224,22 @@ if ($user['ally_id'] == 0) { // Sin alianza
 	if ($mode == 'search' && $user['ally_request'] == 0) { // search one
 
 		$parse = $lang;
-		$lang['searchtext'] = $_POST['searchtext'];
+		$lang['searchtext'] = EncodeText($_POST['searchtext'],"1");
+		$searchAlliance = EncodeText($_POST['searchtext'],"2");
 		$page = parsetemplate(gettemplate('alliance_searchform'), $lang);
 
 		if ($_POST) { // esta parte es igual que el buscador de search.php...
 			// searchtext
-			$search = doquery("SELECT * FROM {{table}} WHERE ally_name LIKE '%{$_POST['searchtext']}%' or ally_tag LIKE '%{$_POST['searchtext']}%' LIMIT 30", "alliance");
+			$search = doquery("SELECT * FROM {{table}} WHERE ally_name LIKE '%{$searchAlliance}%' or ally_tag LIKE '%{$searchAlliance}%' LIMIT 30", "alliance");
 
 			if (mysql_num_rows($search) != 0) {
 				$template = gettemplate('alliance_searchresult_row');
 
 				while ($s = mysql_fetch_array($search)) {
 					$entry = array();
-					$entry['ally_tag'] = "[<a href=\"alliance&mode=apply&allyid={$s['id']}\">{$s['ally_tag']}</a>]";
-					$entry['ally_name'] = $s['ally_name'];
-					$entry['ally_members'] = $s['ally_members'];
+					$entry['ally_tag'] = "[<a href=\"alliance.php?mode=apply&allyid={$s['id']}\">{$s['ally_tag']}</a>]";
+					$entry['ally_name'] = EncodeText($s['ally_name'],"1");
+					$entry['ally_members'] = EncodeText($s['ally_members'],"1");
 
 					$parse['result'] .= parsetemplate($template, $entry);
 				}
