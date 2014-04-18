@@ -214,8 +214,6 @@ if ($user['ally_id'] == 0) { // Sin alianza
 			
 			$query = doquery("INSERT INTO {{table}}(ally_name, ally_tag, ally_owner,ally_owner_range,ally_members,ally_register_time) VALUES ('".$anamenewname."', '".$atagnewname."','".$user['id']."','Leader','1','".time()."')", "alliance");
 
-			var_dump($atagnewname);
-			var_dump($anamenewname);
 			$tagquery = doquery("SELECT * FROM {{table}} WHERE ally_tag='".$atagnewname."'", 'alliance', true);
 
 			doquery("UPDATE {{table}} SET `ally_id`='" . $tagquery['id'] . "', ally_name='" . $tagquery['ally_name'] . "', ally_register_time='" . time() . "' WHERE `id`='" . $user['id'] . "'", "users");
