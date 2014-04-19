@@ -37,6 +37,7 @@
 	$QryTableAks        .= "`galaxy` int(2) default NULL, ";
 	$QryTableAks        .= "`system` int(4) default NULL, ";
 	$QryTableAks        .= "`planet` int(2) default NULL, ";
+	$QryTableAks        .= "`planet_type` int(1) default NULL, ";	
 	$QryTableAks        .= "`eingeladen` text collate latin1_general_ci, ";
 	$QryTableAks        .= "PRIMARY KEY  (`id`) ";
 	$QryTableAks        .= ") ENGINE=MyISAM;";
