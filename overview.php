@@ -429,8 +429,23 @@ switch ($mode) {
             $parse['galaxy_galaxy'] = $planetrow['galaxy'];
             $parse['galaxy_planet'] = $planetrow['planet'];
             $parse['galaxy_system'] = $planetrow['system'];
-            $StatRecord = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user['id'] . "';", 'statpoints', true);
-
+            
+			if(SHOW_ADMIN_IN_CLASSEMENT == 1)
+			{
+				$StatRecord = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user['id'] . "';", 'statpoints', true);
+			}
+			else
+			{
+				$adminstat  = doquery("SELECT * FROM {{table}} WHERE `authlevel` >= '3';", 'users');
+				$retraitAdmin = "";
+				while ($admins = mysql_fetch_array($adminstat))
+				{
+					$retraitAdmin .= " AND `id_owner` !='".$admins['id']."' ";
+					$nombreadmin += count($admins['id']);
+				}
+				$StatRecord = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user['id'] . "' ".$retraitAdmin.";", 'statpoints', true);
+			}
+			
             $parse['user_points'] = pretty_number($StatRecord['build_points']);
             $parse['user_fleet'] = pretty_number($StatRecord['fleet_points']);
             $parse['player_points_tech'] = pretty_number($StatRecord['tech_points']);

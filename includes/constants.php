@@ -52,6 +52,7 @@ if ( defined('INSIDE') ) {
 	// Affiche les administrateur dans la page des records ...
 	// 0 -> les affiche pas
 	// 1 -> les affiche
+	define('SHOW_ADMIN_IN_CLASSEMENT'    , 0);
 	define('SHOW_ADMIN_IN_RECORDS'    , 0);
 	define('SHOW_RECORDS'    , 1);
 

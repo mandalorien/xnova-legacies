@@ -112,7 +112,22 @@ require_once dirname(__FILE__) .'/common.php';
 		$parse['stat_header'] = parsetemplate(gettemplate('stat_alliancetable_header'), $parse);
 
 		$start = floor($range / 100 % 100) * 100;
-		$query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '2' AND `stat_code` = '1' ORDER BY `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
+		
+		# si on ne veux pas voir l'alliance Admin dans le classement
+		if(SHOW_ADMIN_IN_CLASSEMENT == 0)
+		{
+			$retraitAdmin = "";
+			while ($admins = mysql_fetch_array($adminstat))
+			{
+				$retraitAdmin .= " AND `id_owner` !='".$admins['id']."' ";
+			}
+			$query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '2' AND `stat_code` = '1' ".$retraitAdmin." ORDER BY  `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
+		}
+		else
+		{
+			$query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '2' AND `stat_code` = '1' ORDER BY `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
+		}
+		
 
 		$start++;
 		$parse['stat_date']   = $game_config['stats'];
@@ -165,15 +180,22 @@ require_once dirname(__FILE__) .'/common.php';
 		$parse['stat_header'] = parsetemplate(gettemplate('stat_playertable_header'), $parse);
 
 		$start = floor($range / 100 % 100) * 100;
-		// $query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ORDER BY `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
-$retraitAdmin = "";
-		while ($admins = mysql_fetch_array($adminstat)){
+		
+		# si on ne veux pas voir les admin dans le classement
+		if(SHOW_ADMIN_IN_CLASSEMENT == 0)
+		{
+			$retraitAdmin = "";
+			while ($admins = mysql_fetch_array($adminstat))
+			{
 				$retraitAdmin .= " AND `id_owner` !='".$admins['id']."' ";
-				}
-				$query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ".$retraitAdmin." ORDER BY  `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
-
-
-				
+			}
+			$query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ".$retraitAdmin." ORDER BY  `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
+		}
+		else
+		{
+			$query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '1' AND `stat_code` = '1' ORDER BY `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
+		}
+		
 		$start++;
 		$parse['stat_date']   = $game_config['stats'];
 		$parse['stat_values'] = "";
