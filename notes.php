@@ -47,8 +47,8 @@ if($_POST["s"] == 1 || $_POST["s"] == 2){//Edicion y agregar notas
 
 	$time = time();
 	$priority = $_POST["u"];
-	$title = ($_POST["title"]) ? mysql_escape_string(strip_tags($_POST["title"])) : $lang['NoTitle'];
-	$text = ($_POST["text"]) ? mysql_escape_string(strip_tags($_POST["text"])) : $lang['NoText'];
+	$title = ($_POST["title"]) ? mysql_real_escape_string(strip_tags($_POST["title"])) : $lang['NoTitle'];
+	$text = ($_POST["text"]) ? mysql_real_escape_string(strip_tags($_POST["text"])) : $lang['NoText'];
 
 	if($_POST["s"] ==1){
 		doquery("INSERT INTO {{table}} SET owner={$user['id']}, time=$time, priority=$priority, title='$title', text='$text'","notes");

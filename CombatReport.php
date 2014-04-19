@@ -35,7 +35,7 @@ require_once dirname(__FILE__) .'/common.php';
 includeLang('tech');
 $Page .= "<div id=\"content\">";
 
-$raportrow 	= doquery("SELECT * FROM {{table}} WHERE `rid` = '".(mysql_escape_string($_GET["raport"]))."';", 'rw', true);
+$raportrow 	= doquery("SELECT * FROM {{table}} WHERE `rid` = '".(mysql_real_escape_string($_GET["raport"]))."';", 'rw', true);
 
 
 $owners	= explode(",", $raportrow["owners"]);

@@ -285,7 +285,7 @@ function MissionCaseAttack ($FleetRow)
 			$QryInsertRapport .= '`owners` = "'.implode(',', $users2).'", ';
 			$QryInsertRapport .= '`rid` = "'. $rid .'", ';
 			$QryInsertRapport .= '`a_zestrzelona` = "'.$formatted_cr['destroyed'].'", ';
-			$QryInsertRapport .= '`raport` = "'. mysql_escape_string( $raport ) .'"';
+			$QryInsertRapport .= '`raport` = "'. mysql_real_escape_string( $raport ) .'"';
 			doquery($QryInsertRapport,'rw') or die("Error inserting CR to database".mysql_error()."<br /><br />Trying to execute:".mysql_query());
 
             // Colorisation du résumé de rapport pour l'attaquant
