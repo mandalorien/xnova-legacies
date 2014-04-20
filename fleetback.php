@@ -44,6 +44,21 @@ require_once dirname(__FILE__) .'/common.php';
 
 		if ($FleetRow['fleet_owner'] == $user['id']) {
 			if ($FleetRow['fleet_mess'] == 0) {
+			
+				if ($FleetRow['fleet_group'] > 0)
+				{
+					$Aks = doquery("SELECT teilnehmer FROM {{table}} WHERE id = '". $FleetRow['fleet_group'] ."';", 'aks', true);
+					if ($Aks['teilnehmer'] == $FleetRow['fleet_owner'] AND $FleetRow['fleet_mission'] == 1)
+					{
+						doquery ("DELETE FROM {{table}} WHERE id ='". $FleetRow['fleet_group'] ."';", 'aks');
+						doquery ("UPDATE {{table}} SET `fleet_group` = '0' WHERE `fleet_group` = '". $FleetRow['fleet_group'] ."';", 'fleets');
+					}
+					if ($FleetRow['fleet_mission'] == 2)
+					{
+						doquery ("UPDATE {{table}} SET `fleet_group` = '0' WHERE `fleet_id` = '".  $fleetid ."';", 'fleets');
+					}
+				}
+				
 				if ($FleetRow['fleet_end_stay'] != 0) {
 					// Faut calculer le temps reel de retour
 					if ($FleetRow['fleet_start_time'] < time()) {
@@ -59,40 +74,6 @@ require_once dirname(__FILE__) .'/common.php';
 					// C'est quoi le stationnement ??
 					// On calcule sagement la parcelle de temps ecoulée depuis le depart
 					$CurrentFlyingTime = time() - $FleetRow['start_time'];
-				}
-
-				if ($FleetRow['fleet_group'] > 0)
-				{
-					$getCurrentAcs = doquery ( "SELECT * FROM {{table}};" , "aks" ); 
-
-					$aks_code_mr = '';
-					$aks_invited_mr = '';
-					while ( $row = mysql_fetch_array ( $getCurrentAcs ) )
-					{
-						// le createur de l'AG
-						if($row['teilnehmer'] == $user['id'])
-						{
-								doquery("DELETE FROM {{table}} WHERE id =".intval($FleetRow['fleet_group']),'aks');
-						}
-						else
-						{
-							$members = explode ( "," , $row['eingeladen'] );
-							foreach ( $members as $a => $b )
-							{
-								if ( $b == $user['id'])
-								{
-									unset($b);
-								}
-								$novel = implode(',',$b);
-								$requete .= "`eingeladen` = '". ($novel) ."'";
-							}
-						}
-					}
-					
-					$QryUpdatePlanet  = "UPDATE {{table}} SET ";
-					$QryUpdatePlanet .= $requete;
-					$QryUpdatePlanet .= "WHERE `id` = '". $FleetRow["fleet_group"] ."';";
-					$req=doquery($QryUpdatePlanet, 'aks');
 				}
 	
 				// Allez houste au bout du compte y a la maison !! (E.T. phone home.............)
