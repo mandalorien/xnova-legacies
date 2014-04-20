@@ -67,6 +67,13 @@ function MissionCaseStayAlly ( $FleetRow ) {
 									$FleetRow['fleet_resource_crystal'], $lang['Crystal'],
 									$FleetRow['fleet_resource_deuterium'], $lang['Deuterium'] );
 			SendSimpleMessage ( $TargetOwner, '', $FleetRow['fleet_start_time'], 5, $lang['sys_mess_tower'], $lang['sys_mess_transport'], $Message);
+			
+			$QryUpdateFleet  = "UPDATE {{table}} SET ";
+			$QryUpdateFleet .= "`fleet_mess` = 1 ";
+			$QryUpdateFleet .= "WHERE `fleet_id` = '". $FleetRow['fleet_id'] ."' ";
+			$QryUpdateFleet .= "LIMIT 1 ;";
+			
+			doquery( $QryUpdateFleet, 'fleets');
 		} elseif ( $FleetRow['fleet_end_stay'] <= time() ) {
 			$QryUpdateFleet  = "UPDATE {{table}} SET ";
 			$QryUpdateFleet .= "`fleet_mess` = 2 ";

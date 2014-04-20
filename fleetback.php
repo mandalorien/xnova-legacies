@@ -60,6 +60,41 @@ require_once dirname(__FILE__) .'/common.php';
 					// On calcule sagement la parcelle de temps ecoulée depuis le depart
 					$CurrentFlyingTime = time() - $FleetRow['start_time'];
 				}
+
+				if ($FleetRow['fleet_group'] > 0)
+				{
+					$getCurrentAcs = doquery ( "SELECT * FROM {{table}};" , "aks" ); 
+
+					$aks_code_mr = '';
+					$aks_invited_mr = '';
+					while ( $row = mysql_fetch_array ( $getCurrentAcs ) )
+					{
+						// le createur de l'AG
+						if($row['teilnehmer'] == $user['id'])
+						{
+								doquery("DELETE FROM {{table}} WHERE id =".intval($FleetRow['fleet_group']),'aks');
+						}
+						else
+						{
+							$members = explode ( "," , $row['eingeladen'] );
+							foreach ( $members as $a => $b )
+							{
+								if ( $b == $user['id'])
+								{
+									unset($b);
+								}
+								$novel = implode(',',$b);
+								$requete .= "`eingeladen` = '". ($novel) ."'";
+							}
+						}
+					}
+					
+					$QryUpdatePlanet  = "UPDATE {{table}} SET ";
+					$QryUpdatePlanet .= $requete;
+					$QryUpdatePlanet .= "WHERE `id` = '". $FleetRow["fleet_group"] ."';";
+					$req=doquery($QryUpdatePlanet, 'aks');
+				}
+	
 				// Allez houste au bout du compte y a la maison !! (E.T. phone home.............)
 				$ReturnFlyingTime  = $CurrentFlyingTime + time();
 
