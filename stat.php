@@ -119,7 +119,7 @@ require_once dirname(__FILE__) .'/common.php';
 			$retraitAdmin = "";
 			while ($admins = mysql_fetch_array($adminstat))
 			{
-				$retraitAdmin .= " AND `id_owner` !='".$admins['id']."' ";
+				$retraitAdmin .= " AND `id_owner` !='".$admins['ally_id']."' ";
 			}
 			$query = doquery("SELECT * FROM {{table}} WHERE `stat_type` = '2' AND `stat_code` = '1' ".$retraitAdmin." ORDER BY  `". $Order ."` DESC LIMIT ". $start .",100;", 'statpoints');
 		}
@@ -197,16 +197,12 @@ require_once dirname(__FILE__) .'/common.php';
 		}
 		
 		$start++;
-		$parse['stat_date']   = $game_config['stats'];
 		$parse['stat_values'] = "";
 		while ($StatRow = mysql_fetch_assoc($query)) {
 			$parse['stat_date']       = date("d M Y - H:i:s", $StatRow['stat_date']);
 			$parse['player_rank']     = $start;
 
 			$UsrRow                   = doquery("SELECT * FROM {{table}} WHERE `id` = '". $StatRow['id_owner'] ."';", 'users',true);
-
-			$QryUpdateStats .= "`stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '". $TheRank['id_owner'] ."';";
-
 
 			$rank_old                 = $StatRow[ $OldRank ];
 			if ( $rank_old == 0) {

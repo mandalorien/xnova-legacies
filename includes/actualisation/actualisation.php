@@ -77,7 +77,17 @@ include_once('statfunctions.php');
 	doquery ( "DELETE FROM {{table}} WHERE `stat_code` = '2';" , 'statpoints');
 	doquery ( "UPDATE {{table}} SET `stat_code` = `stat_code` + '1';" , 'statpoints');
 
-	$GameUsers  = doquery("SELECT * FROM {{table}}", 'users');
+	# si on ne veux pas voir l'alliance Admin dans le classement
+	if(SHOW_ADMIN_IN_CLASSEMENT == 0)
+	{
+		$retraitAdmin = "WHERE `authlevel` <=2";
+	}
+	else
+	{
+		$retraitAdmin = "";
+	}
+	
+	$GameUsers  = doquery("SELECT * FROM {{table}} ".$retraitAdmin."", 'users');
 
 	while ($CurUser = mysql_fetch_assoc($GameUsers)) {
 		// Recuperation des anciennes statistiques
@@ -144,11 +154,9 @@ include_once('statfunctions.php');
 			}
 			
 			$TPertesCount     = 0;
-			$GCount           = $Points['PertesCount'];
 			$TPertesPoints    = ($pertetotal / $game_config['stat_settings']);
-			
-
-			$TPertesCount     += $Points['PertesCount'];
+			$Points['PertesCount'] = $TPertesPoints;
+			$GCount           = $Points['PertesCount'];
 						
 			$GPoints         += $PlanetPoints;
 			$QryUpdatePlanet  = "UPDATE {{table}} SET ";
@@ -256,22 +264,14 @@ include_once('statfunctions.php');
 	while ($CurAlly = mysql_fetch_assoc($GameAllys)) {
 		// Recuperation des anciennes statistiques
 		$OldStatRecord  = doquery ("SELECT * FROM {{table}} WHERE `stat_type` = '2' AND `id_owner` = '".$CurAlly['id']."';",'statpoints');
-		if ($OldStatRecord) {
-			$OldTotalRank = $OldStatRecord['total_rank'];
-			$OldTechRank  = $OldStatRecord['tech_rank'];
-			$OldBuildRank = $OldStatRecord['build_rank'];
-			$OldDefsRank  = $OldStatRecord['defs_rank'];
-			$OldFleetRank = $OldStatRecord['fleet_rank'];
-			$OldPertesRank = $OldStatRecord['pertes_rank'];
-			// Suppression de l'ancien enregistrement
-			doquery ("DELETE FROM {{table}} WHERE `stat_type` = '2' AND `id_owner` = '".$CurAlly['id']."';",'statpoints');
-		} else {
-			$OldTotalRank = 0;
-			$OldTechRank  = 0;
-			$OldBuildRank = 0;
-			$OldDefsRank  = 0;
-			$OldFleetRank = 0;
-			$OldPertesRank = 0;
+		while($o = mysql_fetch_array($OldStatRecord)) {
+		$OldTotalRank = $o['total_rank'];
+		$OldTechRank = $o['tech_rank'];
+		$OldBuildRank = $o['build_rank'];
+		$OldDefsRank = $o['defs_rank'];
+		$OldFleetRank = $o['fleet_rank'];
+		// Suppression de l'ancien enregistrement
+		doquery ("DELETE FROM {{table}} WHERE `stat_type` = '1' AND `id_owner` = '".$CurUser['id']."';",'statpoints');
 		}
 
 		// Total des unitées consommée pour la recherche
