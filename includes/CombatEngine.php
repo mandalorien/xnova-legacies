@@ -74,9 +74,6 @@ $DfCount = 1;
 // $TargetTech  -> array de tableaux des technologies des defenseurs ainsi que leur id
 // $TargetCount -> Nbre de defenseurs ( de 1 a 5 )
 //
-function FleetCombat ( $AttackFleet, $AttackTech, $AttackCount, $TargetFleet, $TargetTech, $TargetCount ) {
-
-}
 
 function GetWeaponsPerType ( $TypeArray, $Tech ) {
 	global $capacity;
