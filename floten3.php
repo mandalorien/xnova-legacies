@@ -468,7 +468,6 @@ require_once dirname(__FILE__) .'/common.php';
 			$QryUpdateFleets .= "WHERE ";
 			$QryUpdateFleets .= "`fleet_group` = '". $fleet_group_mr ."';";
 			$test = doquery($QryUpdateFleets, 'fleets');
-			var_dump($QryUpdateFleets);
 			$fleet['end_time']         += $fleet['start_time'] - $AksStartTime['Start'];
 		}
 	}
