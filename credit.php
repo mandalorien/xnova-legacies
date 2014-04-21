@@ -30,7 +30,8 @@
 
 define('INSIDE' , true);
 define('INSTALL' , false);
-require_once dirname(__FILE__) .'/common.php';
+define('LOGIN'   , true);
+define('DISABLE_IDENTITY_CHECK', true);
 
 	includeLang('credit');
 	$parse = $lang;
