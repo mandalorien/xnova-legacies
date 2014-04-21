@@ -119,3 +119,17 @@ function GetFleetPoints ($CurrentPlanet,$CurrentUser) {
 
 	return $RetValue;
 }
+
+function GetFlyingFleetPoints ($type,$number) {
+	global $resource, $pricelist, $reslist,$user;
+
+	$FleetCounts = 0;
+	$FleetPoints = 0;
+	$Units          = $pricelist[ $type ]['metal'] + $pricelist[ $type ]['crystal'] + $pricelist[ $type ]['deuterium'];
+	$FleetPoints   += ($Units * $number);
+	$FleetCounts   += $number;
+	$RetValue['FleetCount'] = $FleetCounts;
+	$RetValue['FleetPoint'] = $FleetPoints;
+
+	return $RetValue;
+}

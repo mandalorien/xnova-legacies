@@ -85,6 +85,30 @@ include(ROOT_PATH . 'admin/statfunctions.' . PHPEXT);
 		$TPertesPoints   = 0;
 		$GCount         = $TTechCount;
 		$GPoints        = $TTechPoints;
+		
+		# si il y a des flottes en vols !
+		$flyflotten = doquery("SELECT * FROM {{table}} WHERE fleet_owner=".intval($CurUser['id'])."","fleets");
+		while ($FleetFly = mysql_fetch_assoc($flyflotten))
+		{
+			if($FleetFly['fleet_owner'] == $CurUser['id'])
+			{
+				$temp = explode(';', $FleetFly['fleet_array']);
+				foreach ($temp as $temp2)
+				{
+					$flotte = explode(',', $temp2);
+					if($temp2[0]!='')
+					{
+						$Points           = GetFlyingFleetPoints ($flotte[0],$flotte[1]);
+						$TFleetCount     += $Points['FleetCount'];
+						$GCount          += $Points['FleetCount'];
+						$PlanetPoints    += ($Points['FleetPoint'] / $game_config['stat_settings']);
+						$TFleetPoints    += ($Points['FleetPoint'] / $game_config['stat_settings']);
+						$GPoints         = $PlanetPoints;
+					}
+				}
+			}
+		}
+		
 		$UsrPlanets     = doquery("SELECT * FROM {{table}} WHERE `id_owner` = '". $CurUser['id'] ."';", 'planets');
 		while ($CurPlanet = mysql_fetch_assoc($UsrPlanets) ) {
 			$Points           = GetBuildPoints ( $CurPlanet );
