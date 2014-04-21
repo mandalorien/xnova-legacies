@@ -160,7 +160,7 @@ if ($_GET['mode'] == 'ainfo') {
 	if ($user['ally_id'] == 0) {
 		$lang['bewerbung'] = "<tr>
 	  <th>Candidature</th>
-	  <th><a href=\"alliance.php&mode=apply&amp;allyid=" . $id . "\">Cliquer ici pour ecrire votre candidature</a></th>
+	  <th><a href=\"alliance.php&mode=apply?allyid=" . $id . "\">Cliquer ici pour ecrire votre candidature</a></th>
 
 	</tr>";
 	} else
