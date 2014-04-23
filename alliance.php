@@ -382,6 +382,10 @@ elseif ($user['ally_id'] != 0 && $user['ally_request'] == 0) { // Con alianza
 		}
 		// se sale de la alianza
 		if ($_GET['yes'] == 1) {
+			$nmember  = doquery("SELECT COUNT(ally_id) AS `total` FROM {{table}} WHERE `ally_id` = '".$user['ally_id']."';", 'fleets', true);
+			$nombredemembre     = $nmember['total'] - 1;
+			doquery("UPDATE {{table}} SET `ally_members`='{$nombredemembre}' WHERE `id`='{$user['ally_id']}'", "alliance");
+			
 			doquery("UPDATE {{table}} SET `ally_id`=0, `ally_name` = '' WHERE `id`='{$user['id']}'", "users");
 			$lang['Go_out_welldone'] = str_replace("%s", $ally_name, $lang['Go_out_welldone']);
 			$page = MessageForm($lang['Go_out_welldone'], "<br>", $PHP_SELF, $lang['Ok']);
