@@ -305,15 +305,7 @@ function MissionCaseAttack ($FleetRow)
             $raport .= $lang['sys_debris'] . " " . $lang['Metal'] . ":<font color=\"#adaead\">" . pretty_number ($result['debree']['def'][0] + $result['debree']['att'][0]) . "</font>   " . $lang['Crystal'] . ":<font color=\"#ef51ef\">" . pretty_number ($result['debree']['def'][1] + $result['debree']['att'][1]) . "</font><br /></center>";
 
 			SendSimpleMessage ( $FleetRow['fleet_owner'], '', $FleetRow['fleet_start_time'], 3, $lang['sys_mess_tower'], $lang['sys_mess_attack_report'], $raport);
-
-            // Ajout du petit point raideur
-            $AddPoint = $CurrentUser['xpraid'] + 1;
-
-            $QryUpdateOfficier = "UPDATE {{table}} SET ";
-            $QryUpdateOfficier .= "`xpraid` = '" . $AddPoint . "' ";
-            $QryUpdateOfficier .= "WHERE id = '" . $CurrentUserID . "' ";
-            $QryUpdateOfficier .= "LIMIT 1 ;";
-            doquery($QryUpdateOfficier, 'users');
+			
             // Ajout d'un point au compteur de raids
             $RaidsTotal = $user['raids'] + 1;
             if ($result['won'] == "a") //gagner
@@ -322,7 +314,7 @@ function MissionCaseAttack ($FleetRow)
                 $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
                 $QryUpdateRaidsCompteur .= "`raidswin` ='" . $RaidsWin . "', ";
                 $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
-                $QryUpdateRaidsCompteur .= "WHERE id = '" . $user['id'] . "' ";
+                $QryUpdateRaidsCompteur .= "WHERE id = '" . $FleetRow['fleet_owner'] . "' ";
                 $QryUpdateRaidsCompteur .= "LIMIT 1 ;";
                 doquery($QryUpdateRaidsCompteur, 'users');
             } 
@@ -332,7 +324,7 @@ function MissionCaseAttack ($FleetRow)
                 $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
                 $QryUpdateRaidsCompteur .= "`raidsloose` ='" . $RaidsLoose . "', ";
                 $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
-                $QryUpdateRaidsCompteur .= "WHERE id = '" . $user['id'] . "' ";
+                $QryUpdateRaidsCompteur .= "WHERE id = '" . $FleetRow['fleet_owner'] . "' ";
                 $QryUpdateRaidsCompteur .= "LIMIT 1 ;";
                 doquery($QryUpdateRaidsCompteur, 'users');
             }
@@ -342,7 +334,7 @@ function MissionCaseAttack ($FleetRow)
                 $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
                 $QryUpdateRaidsCompteur .= "`raidsloose` ='" . $RaidsLoose . "', ";
                 $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
-                $QryUpdateRaidsCompteur .= "WHERE id = '" . $user['id'] . "' ";
+                $QryUpdateRaidsCompteur .= "WHERE id = '" . $FleetRow['fleet_owner'] . "' ";
                 $QryUpdateRaidsCompteur .= "LIMIT 1 ;";
                 doquery($QryUpdateRaidsCompteur, 'users');
             }
