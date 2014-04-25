@@ -60,7 +60,7 @@ function mymail($to, $title, $body, $from = '')
     $rp = ADMINEMAIL;
 
     $head = '';
-    $head .= "Content-Type: text/plain \r\n";
+    $head .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
     $head .= "Date: " . date('r') . " \r\n";
     $head .= "Return-Path: $rp \r\n";
     $head .= "From: $from \r\n";
