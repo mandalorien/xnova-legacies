@@ -36,7 +36,7 @@ require_once dirname(__FILE__) . '/common.php';
 $mailData = array(
     'recipient' => NULL,
     'sender' => 'no-reply',
-    'subject' => 'XNova:Legacies - Changement de mot de passe'
+    'subject' => ''. $_SERVER['HTTP_HOST'] .' - Changement de mot de passe'
     );
 
 includeLang('lostpassword');
@@ -44,7 +44,7 @@ includeLang('lostpassword');
 $username = NULL;
 if (!empty($_POST)) {
     if(isset($_POST['pseudo']) && !empty($_POST['pseudo'])) {
-        $username = mysql_real_escape_string($_POST['pseudo']);
+        $username = htmlentities($_POST['pseudo'],ENT_QUOTES,'UTF-8');
         $sql =<<<EOF
 SELECT users.email, users.username
   FROM {{table}} AS users
@@ -87,7 +87,7 @@ Votre mot de passe a été modifié, veuillez trouver ci-dessous vos information
 login : $username
 mot de passe : $randomPass
 
-A bientôt sur XNova:Legacies
+A bientôt sur {$_SERVER['HTTP_HOST']}
 EOF;
 
         $version = VERSION;
@@ -96,15 +96,17 @@ From: {$mailData['sender']}
 X-Sender: Legacies/{$version}
 
 EOF;
-        mail($mailData['recipient'], $mailData['subject'], $message, $headers);
+mail($mailData['recipient'], $mailData['subject'], $message, $headers);
+$newpasswor = md5($randomPass);
+ 					$Qry = "
+						UPDATE
+								{{table}}
+						SET 
+								`password` ='{$newpasswor}'
+						WHERE 
+								`username`      = '{$username}';";
 
-        $sql =<<<EOF
-UPDATE {{table}} AS users
-  SET users.password="{$randomPass}"
-  WHERE users.username="$username"
-EOF;
-
-        doquery($sql, 'users');
+					doquery($Qry, 'users');
         message('Mot de passe envoyé ! Veuillez regarder votre boite e-mail ou dans vos spam.', 'Nouveau mot de passe', 'index.php');
         die();
     }
