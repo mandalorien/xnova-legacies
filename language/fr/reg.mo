@@ -51,8 +51,8 @@ $lang['neededpass']        = 'Mot de passe';
 $lang['code_secu']          = 'Securite';
 
 // Send
-$lang['mail_welcome']      = 'Merci beaucoup de votre inscription &agrave; notre jeu ({gameurl}) \nVotre mot de passe est : {password}\n\nBon amusement !\n{gameurl}';
-$lang['mail_title']        = 'Enregistrment';
+$lang['mail_welcome']      = "Merci beaucoup de votre inscription sur notre jeu ({gameurl}).\n Votre mot de passe est : {password}. \n \n Bon amusement ! \n {gameurl}";
+$lang['mail_title']        = 'Enregistrement';
 $lang['thanksforregistry'] = 'Merci de vous &ecirc;tre inscrit ! Vous allez recevoir un mail avec votre mot de passe.';
 $lang['sender_message_ig'] = 'Admin';
 $lang['subject_message_ig']= 'Bienvenue';
