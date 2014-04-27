@@ -764,15 +764,16 @@ elseif ($user['ally_id'] != 0 && $user['ally_request'] == 0) { // Con alianza
 				`ally_request`='{$ally['ally_request']}'
 				WHERE `id`='{$ally['id']}'", "alliance");
 			} elseif ($t == 2) {
-				$ally['ally_text'] = mysql_real_escape_string(strip_tags($_POST['text']));
+				$ally['ally_text'] = $_POST['text'];
+				$modiftext1 = mysql_real_escape_string(strip_tags(stripslashes($ally['ally_text'])));
 				doquery("UPDATE {{table}} SET
-				`ally_text`='{$ally['ally_text']}'
+				`ally_text`='{$modiftext1}'
 				WHERE `id`='{$ally['id']}'", "alliance");
 			} else {
-				$ally['ally_description'] = mysql_real_escape_string(strip_tags(stripslashes($_POST['text'])));
-
+				$ally['ally_description'] = $_POST['text'];
+				$modiftext2 = mysql_real_escape_string(strip_tags(stripslashes($ally['ally_description'])));
 				doquery("UPDATE {{table}} SET
-				`ally_description`='" . $ally['ally_description'] . "'
+				`ally_description`='" . $modiftext2 . "'
 				WHERE `id`='{$ally['id']}'", "alliance");
 			}
 		}
