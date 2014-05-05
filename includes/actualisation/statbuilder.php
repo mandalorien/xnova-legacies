@@ -101,7 +101,7 @@ include('statfunctions.' . PHPEXT);
 						$GCount          += $Points['FleetCount'];
 						$PlanetPoints    += ($Points['FleetPoint'] / $game_config['stat_settings']);
 						$TFleetPoints    += ($Points['FleetPoint'] / $game_config['stat_settings']);
-						$GPoints         = $PlanetPoints;
+						$GPoints         += $PlanetPoints;
 					}
 				}
 			}
