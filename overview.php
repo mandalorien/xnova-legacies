@@ -79,7 +79,7 @@ switch ($mode) {
                 // Controle du mot de passe pour abandon de colonie
                 if (md5($_POST['pw']) == $user["password"] && $user['id_planet'] != $user['current_planet']) {
 
-                include_once(INCLUDES . 'functions/AbandonColony.' . PHPEXT);
+                include_once('includes/functions/AbandonColony.' . PHPEXT);
                 if (CheckFleets($planetrow)){
                    $strMessage = "Vous ne pouvez pas abandonner la colonie, il y a de la flotte en vol !";
                    message($strMessage, $lang['colony_abandon'], 'overview&mode=renameplanet',3);
