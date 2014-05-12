@@ -37,7 +37,7 @@ $lunarow = doquery("SELECT * FROM {{table}} WHERE `id_owner` = '" . $planetrow['
 CheckPlanetUsedFields ($lunarow);
 
 $mode = isset($_GET['mode']) ? $_GET['mode'] : '';
-$_POST['deleteid'] = intval($_POST['deleteid']);
+$deleteid = intval($_POST['deleteid']);
 $pl = mysql_real_escape_string(isset($_GET['pl']) ? $_GET['pl'] : 0);
 
 includeLang('resources');
@@ -65,7 +65,6 @@ switch ($mode) {
             // Cas d'abandon d'une colonie
             // Affichage de la forme d'abandon de colonie
             $parse = $lang;
-			$parse['link'] = INDEX_BASE;
             $parse['planet_id'] = $planetrow['id'];
             $parse['galaxy_galaxy'] = $planetrow['galaxy'];
             $parse['galaxy_system'] = $planetrow['system'];
