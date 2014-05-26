@@ -63,6 +63,10 @@ if (0 === filesize(ROOT_PATH . 'config.php') /*&& !defined('IN_INSTALL')*/) {
     die();
 }
 
+/*include(ROOT_PATH . 'github.class.' . PHPEXT);
+$github = new github();
+$fil = $github->Rootfile(dirname(__FILE__));
+var_dump($fil);*/
 $game_config   = array();
 $user          = array();
 $lang          = array();

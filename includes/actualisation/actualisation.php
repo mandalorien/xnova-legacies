@@ -129,7 +129,7 @@ include_once('statfunctions.php');
 
 		# si il y a des flottes en vols !
 		$flyflotten = doquery("SELECT * FROM {{table}} WHERE fleet_owner=".intval($CurUser['id'])."","fleets");
-		while ($FleetFly = mysql_fetch_assoc($flyflotten))
+		while($FleetFly = mysql_fetch_assoc($flyflotten))
 		{
 			if($FleetFly['fleet_owner'] == $CurUser['id'])
 			{
@@ -142,9 +142,9 @@ include_once('statfunctions.php');
 						$Points           = GetFlyingFleetPoints ($flotte[0],$flotte[1]);
 						$TFleetCount     += $Points['FleetCount'];
 						$GCount          += $Points['FleetCount'];
-						$PlanetPoints    += ($Points['FleetPoint'] / $game_config['stat_settings']);
+						$PlanetPoints    = ($Points['FleetPoint'] / $game_config['stat_settings']);
 						$TFleetPoints    += ($Points['FleetPoint'] / $game_config['stat_settings']);
-						$GPoints         = $PlanetPoints;
+						$GPoints         += $PlanetPoints;
 					}
 				}
 			}
