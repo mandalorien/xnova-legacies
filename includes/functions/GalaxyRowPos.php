@@ -28,14 +28,21 @@
  *
  */
 
-function GalaxyRowPos ( $Planet, $GalaxyRow ) {
+function GalaxyRowPos ( $Planet, $GalaxyRow,$Galaxy, $System) {
 	// Pos
 	$Result  = "<th width=30>";
-	$Result .= "<a href=\"#\"";
 	if ($GalaxyRow) {
+		$Result .= "<a href=\"#\"";
 		$Result .= " tabindex=\"". ($Planet + 1) ."\"";
+		$Result .= ">". $Planet ."</a>";
 	}
-	$Result .= ">". $Planet ."</a>";
+	else
+	{
+		$Result .= "<a href=\"fleet.php?galaxy=".$Galaxy."&system=".$System."&planet=".$Planet."&planettype=1&target_mission=7\" title=\" coloniser en ".$Galaxy.":".$System.":".$Planet." \"";
+		$Result .= " tabindex=\"". ($Planet + 1) ."\"";
+		$Result .= ">". $Planet ."</a>";
+	}
+	
 	$Result .= "</th>";
 
 	return $Result;

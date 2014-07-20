@@ -110,6 +110,7 @@ function BatimentBuildingPage (&$CurrentPlanet, $CurrentUser) {
 
 	$SubTemplate         = gettemplate('buildings_builds_row');
 	$BuildingPage        = "";
+	$zaehler              = 1;
 	foreach($lang['tech'] as $Element => $ElementName) {
 		if (in_array($Element, $Allowed[$CurrentPlanet['planet_type']])) {
 			$CurrentMaxFields      = CalculateMaxPlanetFields($CurrentPlanet);
@@ -119,6 +120,11 @@ function BatimentBuildingPage (&$CurrentPlanet, $CurrentUser) {
 				$RoomIsOk = false;
 			}
 
+			if ($zaehler == 0 || $zaehler % 1 == 0) {
+                    $parse['tropen'] = '<tr>';
+                } else {
+                    $parse['tropen'] = '';
+                }
 			if (IsTechnologieAccessible($CurrentUser, $CurrentPlanet, $Element)) {
 				$HaveRessources        = IsElementBuyable ($CurrentUser, $CurrentPlanet, $Element, true, false);
 				$parse                 = array();
@@ -132,6 +138,7 @@ function BatimentBuildingPage (&$CurrentPlanet, $CurrentUser) {
 				$parse['time']         = ShowBuildTime($ElementBuildTime);
 				$parse['price']        = GetElementPrice($CurrentUser, $CurrentPlanet, $Element);
 				$parse['rest_price']   = GetRestPrice($CurrentUser, $CurrentPlanet, $Element);
+				$parse['rest_price_times'] = GetRestPriceTimes($CurrentUser, $CurrentPlanet, $Element);
 				$parse['click']        = '';
 				$NextBuildLevel        = $CurrentPlanet[$resource[$Element]] + 1;
 
@@ -172,6 +179,14 @@ function BatimentBuildingPage (&$CurrentPlanet, $CurrentUser) {
 				} else {
 					$parse['click'] = "<font color=#FF0000>". $lang['NoMoreSpace'] ."</font>";
 				}
+				
+				if ($zaehler % 1 == 0) {
+                    $parse['trclose'] = '</tr>';
+                    $zaehler++;
+                } else {
+                    $parse['trclose'] = '';
+                    $zaehler++;
+                }
 
 				$BuildingPage .= parsetemplate($SubTemplate, $parse);
 			}
