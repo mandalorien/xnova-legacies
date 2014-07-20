@@ -40,13 +40,13 @@ function MissionCaseColonisation ( $FleetRow ) {
 			// Y a personne qui s'y est mis avant que je ne debarque !
 			if ($iPlanetCount >= MAX_PLAYER_PLANETS) {
 				$TheMessage = $lang['sys_colo_arrival'] . $TargetAdress . $lang['sys_colo_maxcolo'] . MAX_PLAYER_PLANETS . $lang['sys_colo_planet'];
-				SendSimpleMessage ( $FleetRow['fleet_owner'], '0', $FleetRow['fleet_start_time'], 0, $lang['sys_colo_mess_from'], $lang['sys_colo_mess_report'], $TheMessage);
+				SendSimpleMessage ( $FleetRow['fleet_owner'], '0', $FleetRow['fleet_start_time'], 15, $lang['sys_colo_mess_from'], $lang['sys_colo_mess_report'], $TheMessage);
 				doquery("UPDATE {{table}} SET `fleet_mess` = '1' WHERE `fleet_id` = ". $FleetRow["fleet_id"], 'fleets');
 			} else {
 				$NewOwnerPlanet = CreateOnePlanetRecord($FleetRow['fleet_end_galaxy'], $FleetRow['fleet_end_system'], $FleetRow['fleet_end_planet'], $FleetRow['fleet_owner'], $lang['sys_colo_defaultname'], false);
 				if ( $NewOwnerPlanet == true ) {
 					$TheMessage = $lang['sys_colo_arrival'] . $TargetAdress . $lang['sys_colo_allisok'];
-					SendSimpleMessage ( $FleetRow['fleet_owner'], '0', $FleetRow['fleet_start_time'], 0, $lang['sys_colo_mess_from'], $lang['sys_colo_mess_report'], $TheMessage);
+					SendSimpleMessage ( $FleetRow['fleet_owner'], '0', $FleetRow['fleet_start_time'], 15, $lang['sys_colo_mess_from'], $lang['sys_colo_mess_report'], $TheMessage);
 					// on ajoute les ressources sur la plapla
 					$QryUpdatePlanet  = "UPDATE {{table}} SET ";
 					$QryUpdatePlanet .= "`metal` =`metal` + '". $FleetRow['fleet_resource_metal'] ."', ";
@@ -103,14 +103,14 @@ function MissionCaseColonisation ( $FleetRow ) {
 					}
 				} else {
 					$TheMessage = $lang['sys_colo_arrival'] . $TargetAdress . $lang['sys_colo_badpos'];
-					SendSimpleMessage ( $FleetRow['fleet_owner'], '0', $FleetRow['fleet_start_time'], 0, $lang['sys_colo_mess_from'], $lang['sys_colo_mess_report'], $TheMessage);
+					SendSimpleMessage ( $FleetRow['fleet_owner'], '0', $FleetRow['fleet_start_time'], 15, $lang['sys_colo_mess_from'], $lang['sys_colo_mess_report'], $TheMessage);
 					doquery("UPDATE {{table}} SET `fleet_mess` = '1' WHERE `fleet_id` = ". $FleetRow["fleet_id"], 'fleets');
 				}
 			}
 		} else {
 			// Pas de bol coiffé sur le poteau !
 			$TheMessage = $lang['sys_colo_arrival'] . $TargetAdress . $lang['sys_colo_notfree'];
-			SendSimpleMessage ( $FleetRow['fleet_owner'], '0', $FleetRow['fleet_end_time'], 0, $lang['sys_colo_mess_from'], $lang['sys_colo_mess_report'], $TheMessage);
+			SendSimpleMessage ( $FleetRow['fleet_owner'], '0', $FleetRow['fleet_end_time'], 15, $lang['sys_colo_mess_from'], $lang['sys_colo_mess_report'], $TheMessage);
 			// Mettre a jour la flotte pour qu'effectivement elle revienne !
 			doquery("UPDATE {{table}} SET `fleet_mess` = '1' WHERE `fleet_id` = ". $FleetRow["fleet_id"], 'fleets');
 
