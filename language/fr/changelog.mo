@@ -32,7 +32,32 @@ $lang['Version']     = 'Version';
 $lang['Description'] = 'D&eacute;scription';
 $lang['changelog']   = array(
 
-
+'<font color="orange">2009.2.1</font>' => '- UPD : annonce (mandalorien)
+- FIX : abandon colonie (mandalorien)
+- FIX : Mail inscription (mandalorien)
+- ADD : Actualisation [sans le cron] (mandalorien)
+- ADD : Fuzeau horaire (mandalorien)
+- ADD : pts pertes (mandalorien)
+- FIX : colonisation [ressource & flotte arrivant sur la plan&egrave;te] (mandalorien)
+- FIX : frames [deconnexion] (mandalorien)
+- ADD : Attaque group&eacute; (mandalorien)
+- FIX : espionnage(mission) (mandalorien)
+- ADD : Logout (mandalorien)
+- FIX : production (mandalorien)
+- FIX : marchand (mandalorien)
+- FIX : alliance (mandalorien)
+- FIX : temps de vol (mandalorien)
+- FIX : petit & grand bouclier (mandalorien)
+- FIX : Statistique [admin retirer](mandalorien)
+- FIX : R&eacute;seau de recherche intergalactique (mandalorien)
+- FIX : Page record[admin retirer] (mandalorien)
+- FIX : Construction max (mandalorien)
+- FIX : la construction flotte ou d&eacute;fense (mandalorien)
+- FIX : l\'annulation de la technologie[rendu des ressources] (mandalorien)
+- FIX : Raid perdu/gagner (mandalorien)
+- FIX : Faille critique permettant à un attaquant de modifier ses droits ... (mandalorien)
+- FIX : ajout des points d&eacute;fenses(mandalorien)
+',
 '<font color="lime">0.8e</font>' => '- ADD : Fonction SecureArray() pour les variables POST et GET (Bono)
 - ADD : Les administrateurs choisissent desormais le fond de la baniere... (Bono)
 - ADD : Mode vacances + Production a 0 + Interdiction de construire(Prethorian)
