@@ -29,9 +29,7 @@
  */
 
 function ResearchBuildingPage (&$CurrentPlanet, $CurrentUser, $InResearch, $ThePlanet) {
-	       $_GET['tech']=ereg_replace("[^0-9]",'',$_GET['tech']);
 	global $lang, $resource, $reslist, $dpath, $game_config, $_GET;
-
 
 	$NoResearchMessage = "";
 	$bContinue         = true;
@@ -129,15 +127,15 @@ function ResearchBuildingPage (&$CurrentPlanet, $CurrentUser, $InResearch, $TheP
 	$TechRowTPL = gettemplate('buildings_research_row');
 	$TechScrTPL = gettemplate('buildings_research_script');
 
-	foreach($lang['tech'] as $Tech => $TechName) {
-		if ($Tech > 105 && $Tech <= 199) {
+	foreach($reslist['tech'] as $Tech)
+	{
 			if ( IsTechnologieAccessible($CurrentUser, $CurrentPlanet, $Tech)) {
 				$RowParse                = $lang;
 				$RowParse['dpath']       = $dpath;
 				$RowParse['tech_id']     = $Tech;
 				$building_level          = $CurrentUser[$resource[$Tech]];
 				$RowParse['tech_level']  = ($building_level == 0) ? "" : "( ". $lang['level']. " ".$building_level." )";
-				$RowParse['tech_name']   = $TechName;
+				$RowParse['tech_name']   = $lang['tech'][$Tech];
 				$RowParse['tech_descr']  = $lang['res']['descriptions'][$Tech];
 				$RowParse['tech_price']  = GetElementPrice($CurrentUser, $CurrentPlanet, $Tech);
 				$SearchTime              = GetBuildingTime($CurrentUser, $CurrentPlanet, $Tech);
@@ -202,7 +200,6 @@ function ResearchBuildingPage (&$CurrentPlanet, $CurrentUser, $InResearch, $TheP
 				$RowParse['tech_link']  = $TechnoLink;
 				$TechnoList            .= parsetemplate($TechRowTPL, $RowParse);
 			}
-		}
 	}
 
 	$PageParse                = $lang;

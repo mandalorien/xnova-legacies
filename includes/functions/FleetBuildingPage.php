@@ -29,7 +29,7 @@
  */
 
 function FleetBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
- 	global $pricelist, $lang, $resource, $dpath, $_POST;
+ 	global $pricelist,$reslist,$lang, $resource, $dpath, $_POST;
 
 	if (isset($_POST['fmenge'])) {
 		// On vient de Cliquer ' Construire '
@@ -40,7 +40,7 @@ function FleetBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 			// Construction d'Element recuper�s sur la page de Flotte ...
 			// ATTENTION ! La file d'attente Flotte est Commune a celle des Defenses
 			// Dans fmenge, on devrait trouver un tableau des elements constructibles et du nombre d'elements souhait�s
-
+		
 			$Element = intval($Element);
 			$Count   = ereg_replace("[^0-9]",'',$Count);
 			if ($Count > MAX_FLEET_OR_DEFS_PER_ROW) {
@@ -99,8 +99,8 @@ function FleetBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 	// -------------------------------------------------------------------------------------------------------
 	// Construction de la page du Chantier (car si j'arrive ici ... c'est que j'ai tout ce qu'il faut pour ...
 	$TabIndex = 0;
-	foreach($lang['tech'] as $Element => $ElementName) {
-		if ($Element > 201 && $Element <= 399) {
+	foreach($reslist['fleet'] as $Element)
+	{
 			if (IsTechnologieAccessible($CurrentUser, $CurrentPlanet, $Element)) {
 				// Disponible à la construction
 
@@ -124,7 +124,7 @@ function FleetBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 
 				// Description
 				$PageTable .= "<td class=l>";
-				$PageTable .= "<a href=infos.".PHPEXT."?gid=".$Element.">".$ElementName."</a> ".$ElementNbre."<br>";
+				$PageTable .= "<a href=infos.".PHPEXT."?gid=".$Element.">".$lang['tech'][$Element]."</a> ".$ElementNbre."<br>";
 				$PageTable .= "".$lang['res']['descriptions'][$Element]."<br>";
 				// On affiche le 'prix' avec eventuellement ce qui manque en ressource
 				$PageTable .= GetElementPrice($CurrentUser, $CurrentPlanet, $Element, false);
@@ -150,7 +150,6 @@ function FleetBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 				// Fin de ligne (les 3 cases sont construites !!
 				$PageTable .= "</tr>";
 			}
-		}
 	}
 
 	if ($CurrentPlanet['b_hangar_id'] != '') {

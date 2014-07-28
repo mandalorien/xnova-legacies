@@ -29,7 +29,7 @@
  */
 
 function DefensesBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
- 	global $lang, $resource, $dpath, $_POST;
+ 	global $lang, $resource,$reslist, $dpath, $_POST;
 
 	if (isset($_POST['fmenge'])) {
 		// On vient de Cliquer ' Construire '
@@ -140,8 +140,8 @@ function DefensesBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 	// Construction de la page du Chantier (car si j'arrive ici ... c'est que j'ai tout ce qu'il faut pour ...
 	$TabIndex  = 0;
 	$PageTable = "";
-	foreach($lang['tech'] as $Element => $ElementName) {
-		if ($Element > 400 && $Element <= 599) {
+	foreach($reslist['defense'] as $Element)
+	{
 			if (IsTechnologieAccessible($CurrentUser, $CurrentPlanet, $Element)) {
 				// Disponible à la construction
 
@@ -165,7 +165,7 @@ function DefensesBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 
 				// Description
 				$PageTable .= "<td class=l>";
-				$PageTable .= "<a href=infos.".PHPEXT."?gid=".$Element.">".$ElementName."</a> ".$ElementNbre."<br>";
+				$PageTable .= "<a href=infos.".PHPEXT."?gid=".$Element.">".$lang['tech'][$Element]."</a> ".$ElementNbre."<br>";
 				$PageTable .= "".$lang['res']['descriptions'][$Element]."<br>";
 				// On affiche le 'prix' avec eventuellement ce qui manque en ressource
 				$PageTable .= GetElementPrice($CurrentUser, $CurrentPlanet, $Element, false);
@@ -214,7 +214,6 @@ function DefensesBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 				// Fin de ligne (les 3 cases sont construites !!
 				$PageTable .= "</tr>";
 			}
-		}
 	}
 
 	if ($CurrentPlanet['b_hangar_id'] != '') {

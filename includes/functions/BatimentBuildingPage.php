@@ -111,8 +111,8 @@ function BatimentBuildingPage (&$CurrentPlanet, $CurrentUser) {
 	$SubTemplate         = gettemplate('buildings_builds_row');
 	$BuildingPage        = "";
 	$zaehler              = 1;
-	foreach($lang['tech'] as $Element => $ElementName) {
-		if (in_array($Element, $Allowed[$CurrentPlanet['planet_type']])) {
+	foreach($Allowed[$CurrentPlanet['planet_type']] as $Element)
+	{
 			$CurrentMaxFields      = CalculateMaxPlanetFields($CurrentPlanet);
 			if ($CurrentPlanet["field_current"] < ($CurrentMaxFields - $Queue['lenght'])) {
 				$RoomIsOk = true;
@@ -132,7 +132,7 @@ function BatimentBuildingPage (&$CurrentPlanet, $CurrentUser) {
 				$parse['i']            = $Element;
 				$BuildingLevel         = $CurrentPlanet[$resource[$Element]];
 				$parse['nivel']        = ($BuildingLevel == 0) ? "" : " (". $lang['level'] ." ". $BuildingLevel .")";
-				$parse['n']            = $ElementName;
+				$parse['n']            = $lang['tech'][$Element];
 				$parse['descriptions'] = $lang['res']['descriptions'][$Element];
 				$ElementBuildTime      = GetBuildingTime($CurrentUser, $CurrentPlanet, $Element);
 				$parse['time']         = ShowBuildTime($ElementBuildTime);
@@ -190,7 +190,6 @@ function BatimentBuildingPage (&$CurrentPlanet, $CurrentUser) {
 
 				$BuildingPage .= parsetemplate($SubTemplate, $parse);
 			}
-		}
 	}
 
 	$parse                         = $lang;
