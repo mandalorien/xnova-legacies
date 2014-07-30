@@ -102,12 +102,12 @@ function DisplayGameSettingsPage ( $CurrentUser ) {
 
 			// Vitesse du Jeu
 			if (isset($_POST['game_speed']) && is_numeric($_POST['game_speed'])) {
-				$game_config['game_speed'] = $_POST['game_speed'];
+				$game_config['game_speed'] = $_POST['game_speed']*2500;
 			}
 
 			// Vitesse des Flottes
 			if (isset($_POST['fleet_speed']) && is_numeric($_POST['fleet_speed'])) {
-				$game_config['fleet_speed'] = $_POST['fleet_speed'];
+				$game_config['fleet_speed'] = $_POST['fleet_speed']*2500;
 			}
 
 			// Multiplicateur de Production
@@ -251,8 +251,8 @@ $game_config['banner_source_post'] = $_POST['banner_source_post'];
 
 			$parse                           = $lang;
 			$parse['game_name']              = $game_config['game_name'];
-			$parse['game_speed']             = $game_config['game_speed'];
-			$parse['fleet_speed']            = $game_config['fleet_speed'];
+			$parse['game_speed']             = $game_config['game_speed'] / 2500;
+			$parse['fleet_speed']            = $game_config['fleet_speed'] / 2500;
 			$parse['resource_multiplier']    = $game_config['resource_multiplier'];
 			$parse['forum_url']              = $game_config['forum_url'];
 			$parse['initial_fields']         = $game_config['initial_fields'];
