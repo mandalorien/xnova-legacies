@@ -138,7 +138,7 @@ function BatimentBuildingPage (&$CurrentPlanet, $CurrentUser) {
 				$parse['time']         = ShowBuildTime($ElementBuildTime);
 				$parse['price']        = GetElementPrice($CurrentUser, $CurrentPlanet, $Element);
 				$parse['rest_price']   = GetRestPrice($CurrentUser, $CurrentPlanet, $Element);
-				$parse['rest_price_times'] = GetRestPriceTimes($CurrentUser, $CurrentPlanet, $Element);
+				// $parse['rest_price_times'] = GetRestPriceTimes($CurrentUser, $CurrentPlanet, $Element);
 				$parse['click']        = '';
 				$NextBuildLevel        = $CurrentPlanet[$resource[$Element]] + 1;
 
