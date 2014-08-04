@@ -488,7 +488,10 @@ switch ($mode) {
             $parse['dpath'] = $dpath;
             $parse['planet_image'] = $planetrow['image'];
             $parse['anothers_planets'] = $AllPlanets;
-            $parse['max_users'] = $game_config['users_amount'];
+            //...
+			$QryCountPlayers = doquery("SELECT COUNT(*) AS 'nbJoueurs' FROM {{table}} WHERE authlevel < 3", "users", true);
+			//...
+			$parse['max_users'] = $QryCountPlayers['nbJoueurs'];
 
             $parse['metal_debris'] = pretty_number($galaxyrow['metal']);
             $parse['crystal_debris'] = pretty_number($galaxyrow['crystal']);

@@ -110,7 +110,7 @@ function BuildRessourcePage ( $CurrentUser, $CurrentPlanet ) {
 					}
 					elseif ($ProdID >= 4 )
 					{
-						if($ProdID == 5 && $CurrentPlanet['deuterium'] == 0)
+						if($ProdID == 12 && $CurrentPlanet['deuterium'] == 0)
 							continue;
 
 						$deuterium = (floor( eval ( $ProdGrid[$ProdID]['formule']['deuterium'] ) * (0.01 * $post_porcent) * ( $game_config['resource_multiplier'] ) ));
