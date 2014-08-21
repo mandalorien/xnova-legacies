@@ -160,8 +160,8 @@ function StdUserHeader ($title = '', $metatags = '') {
 		$parse['-style-'] .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/about.css\">\n";
 	} else {
 		$parse['dpath']    = DEFAULT_SKINPATH;
-		$parse['-style-']  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"". DEFAULT_SKINPATH ."/default.css\" />";
-		$parse['-style-'] .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"". DEFAULT_SKINPATH ."/formate.css\" />";
+		$parse['-style-']  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"". DEFAULT_SKINPATH ."default.css\" />";
+		$parse['-style-'] .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"". DEFAULT_SKINPATH ."formate.css\" />";
 	}
 
 	$parse['-meta-']  = ($metatags) ? $metatags : "";

@@ -43,32 +43,18 @@ $XNovaRootURL  = "http://". $XNova_Host ."/". $XNova_URI ."/";
 
 require_once dirname(__FILE__) .'/common.php';
 
-$page  = "<html>\n";
-$page .= "	<head>\n";
-$page .= '		<!--<meta name="viewport" content="width=device-width, target-densitydpi=device-dpi"/> pourle mobile-->
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<meta http-equiv="content-language" content="fr" />
-		<meta name="language" content="fr" />
-		<meta content="Mandalorien" name="author"/>
-		<meta content="index,follow,all" name="robots" />
-		<meta content="Xnova" name="copyright"/>
-		<meta content="xnova,xnova-legacies,wootook ,wargame,game,jeu" name="keywords" />
-		<meta content="xnova-legacies::2009.2" name="description"/>
-		<meta content="never" name="Expires"/>
-		<meta content="Tous public" name="rating"/>
-		<meta content="Xnova-legacies" name="subject"/>
-		<link rel="shortcut icon" href="favicon.ico">';
-$page .= "\n";
-$page .= "		<title>". $game_config['game_name'] ."</title>\n";
-$page .= "	</head>\n";
-$page .= "		<frameset framespacing=\"0\" border=\"0\" cols=\"190,*\" frameborder=\"0\">\n";
-$page .= "			<frame name=\"LeftMenu\" target=\"Mainframe\" src=\"leftmenu.php\" noresize scrolling=\"no\" marginwidth=\"0\" marginheight=\"0\">\n";
-$page .= "			<frame name=\"Hauptframe\" src=\"overview.php\">\n";
-$page .= "			<noframes>\n";
-$page .= "				<p>Votre navigateur ne gère pas les frames.</p>\n";
-$page .= "			</noframes>\n";
-$page .= "		</frameset>\n";
-$page .= "</html>\n";
+$parse['meta-charset'] = "utf-8";
+$parse['meta-language'] = "fr";
+$parse['meta-author'] = "wootook";
+$parse['meta-robots'] = "index,follow,all";
+$parse['meta-copyright'] = "wootook/xnova";
+$parse['meta-keywords'] = "xnova,xnova-legacies,wootook ,wargame,game,jeu";
+$parse['meta-description'] = "univers dans lesquel vous construisez un empire!";
+$parse['meta-Expires'] = "never";
+$parse['meta-rating'] = "Tous public";
+$parse['meta-subject'] = "Xnova-legacies";
 
+
+$page = parsetemplate(gettemplate('frame'), $parse);
 echo $page;
-
+?>
