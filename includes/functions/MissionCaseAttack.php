@@ -306,11 +306,12 @@ function MissionCaseAttack ($FleetRow)
 
 			SendSimpleMessage ( $FleetRow['fleet_owner'], '', $FleetRow['fleet_start_time'], 3, $lang['sys_mess_tower'], $lang['sys_mess_attack_report'], $raport);
 			
+			$Attackuser = doquery('SELECT * FROM {{table}} WHERE id='.intval($FleetRow['fleet_owner']),'users', true);
             // Ajout d'un point au compteur de raids
-            $RaidsTotal = $user['raids'] + 1;
+            $RaidsTotal = $Attackuser['raids'] + 1;
             if ($result['won'] == "a") //gagner
 			{
-                $RaidsWin = $user['raidswin'] + 1;
+                $RaidsWin = $Attackuser['raidswin'] + 1;
                 $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
                 $QryUpdateRaidsCompteur .= "`raidswin` ='" . $RaidsWin . "', ";
                 $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
@@ -320,7 +321,7 @@ function MissionCaseAttack ($FleetRow)
             } 
 			elseif ($result['won'] == "w") //match nul
 			{
-                $RaidsLoose = $user['raidsloose'] + 1;
+                $RaidsLoose = $Attackuser['raidsloose'] + 1;
                 $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
                 $QryUpdateRaidsCompteur .= "`raidsloose` ='" . $RaidsLoose . "', ";
                 $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
@@ -330,7 +331,7 @@ function MissionCaseAttack ($FleetRow)
             }
 			elseif ($result['won'] == "r") //perdu
 			{
-                $RaidsLoose = $user['raidsloose'] + 1;
+                $RaidsLoose = $Attackuser['raidsloose'] + 1;
                 $QryUpdateRaidsCompteur = "UPDATE {{table}} SET ";
                 $QryUpdateRaidsCompteur .= "`raidsloose` ='" . $RaidsLoose . "', ";
                 $QryUpdateRaidsCompteur .= "`raids` ='" . $RaidsTotal . "' ";
