@@ -1,21 +1,4 @@
 <div id="main">
-<script type="text/javascript">
-var lastType = "";
-function changeAction(type) {
-	if (document.formular.Uni.value == '') {
-		alert('{log_univ}');
-	} else {
-		if(type == "login" && lastType == "") {
-			var url = "http://" + document.formular.Uni.value + "";
-			document.formular.action = url;
-		} else {
-			var url = "http://" + document.formular.Uni.value + "/reg.php";
-			document.formular.action = url;
-			document.formular.submit();
-		}
-	}
-}
-</script>
 <div id="login">
 <div id="login_input">
 <form name="formular" action="" method="post" onsubmit="changeAction('login');">
@@ -28,7 +11,7 @@ function changeAction(type) {
 	</td>
 </tr><tr>
 	<td style="padding-right: 4px;">
-		{Remember_me} <input name="rememberme" type="checkbox"> <script type="text/javascript">document.formular.Uni.focus(); </script><input name="submit" value="{Login}" type="submit">
+		{Remember_me} <input name="rememberme" type="checkbox"><input name="submit" value="{Login}" type="submit">
 	</td>
 </tr><tr>
 	<td style="padding-right: 4px;">
