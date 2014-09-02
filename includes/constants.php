@@ -69,7 +69,17 @@ if ( defined('INSIDE') ) {
 } else {
 	die("Hacking attempt");
 }
-
-
-
+	#####################################
+	# 		paramètre des metatags		#
+	#####################################
+	define('meta_charset',"utf-8");
+	define('meta_language',"fr");
+	define('meta_author',"wootook");
+	define('meta_robots',"index,follow,all");
+	define('meta_copyright',"wootook/xnova");
+	define('meta_keywords',"xnova,xnova-legacies,wootook ,wargame,game,jeu");
+	define('meta_description',"univers dans lesquel vous construisez un empire!");
+	define('meta_Expires',"never");
+	define('meta_rating',"Tous public");
+	define('meta_subject',"Xnova-legacies");
 ?>

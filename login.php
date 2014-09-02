@@ -94,6 +94,7 @@ EOF;
     $parse['forum_url']    = $game_config['forum_url'];
     $parse['PasswordLost'] = $lang['PasswordLost'];
 
+	$parse['SERVER_URL'] = WEB_URL;
     $page = parsetemplate(gettemplate('login_body'), $parse);
 
     // Test pour prendre le nombre total de joueur et le nombre de joueurs connect�s

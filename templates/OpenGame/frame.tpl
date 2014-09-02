@@ -3,7 +3,7 @@
 <!-- Cette page est valide W3C -->
 	<!-- Debut du head -->
 	<head>
-		<title>essaye</title>
+		<title>{title}</title>
 		<!-- Title de la page -->
 		<!--<meta name="viewport" content="width=device-width, target-densitydpi=device-dpi"/> pourle mobile-->
 		<meta http-equiv="Content-Type" content="text/html; charset={meta-charset}"/>

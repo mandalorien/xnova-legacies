@@ -43,17 +43,18 @@ $XNovaRootURL  = "http://". $XNova_Host ."/". $XNova_URI ."/";
 
 require_once dirname(__FILE__) .'/common.php';
 
-$parse['meta-charset'] = "utf-8";
-$parse['meta-language'] = "fr";
-$parse['meta-author'] = "wootook";
-$parse['meta-robots'] = "index,follow,all";
-$parse['meta-copyright'] = "wootook/xnova";
-$parse['meta-keywords'] = "xnova,xnova-legacies,wootook ,wargame,game,jeu";
-$parse['meta-description'] = "univers dans lesquel vous construisez un empire!";
-$parse['meta-Expires'] = "never";
-$parse['meta-rating'] = "Tous public";
-$parse['meta-subject'] = "Xnova-legacies";
+$parse['meta-charset'] = meta_charset;
+$parse['meta-language'] = meta_language;
+$parse['meta-author'] = meta_author;
+$parse['meta-robots'] = meta_robots;
+$parse['meta-copyright'] = meta_copyright;
+$parse['meta-keywords'] = meta_keywords;
+$parse['meta-description'] = meta_description;
+$parse['meta-Expires'] = meta_Expires;
+$parse['meta-rating'] = meta_rating;
+$parse['meta-subject'] = meta_subject;
 
+$parse['title'] = $game_config["game_name"];
 
 $page = parsetemplate(gettemplate('frame'), $parse);
 echo $page;

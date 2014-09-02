@@ -154,10 +154,21 @@ function StdUserHeader ($title = '', $metatags = '') {
 
 	$parse             = $langInfos;
 	$parse['title']    = $title;
+	$parse['meta-charset'] = meta_charset;
+	$parse['meta-language'] = meta_language;
+	$parse['meta-author'] = meta_author;
+	$parse['meta-robots'] = meta_robots;
+	$parse['meta-copyright'] = meta_copyright;
+	$parse['meta-keywords'] = meta_keywords;
+	$parse['meta-description'] = meta_description;
+	$parse['meta-Expires'] = meta_Expires;
+	$parse['meta-rating'] = meta_rating;
+	$parse['meta-subject'] = meta_subject;
+
 	if ( defined('LOGIN') ) {
 		$parse['dpath']    = "skins/xnova/";
-		$parse['-style-']  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/styles.css\">\n";
-		$parse['-style-'] .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/about.css\">\n";
+		$parse['-style-']  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/styles.css\">
+		<link rel=\"stylesheet\" type=\"text/css\" href=\"css/about.css\">";
 	} else {
 		$parse['dpath']    = DEFAULT_SKINPATH;
 		$parse['-style-']  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"". DEFAULT_SKINPATH ."default.css\" />";
