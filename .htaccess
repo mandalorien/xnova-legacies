@@ -4,7 +4,7 @@ IndexIgnore *
 AddDefaultCharset UTF-8
 
 RewriteEngine On
-RewriteBase /
+RewriteBase /xnova-legacies/
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
