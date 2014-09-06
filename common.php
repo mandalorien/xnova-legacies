@@ -52,11 +52,7 @@ if(defined('IN_ADMIN'))
 }
 $baseUrl = implode("/",$fragment);
 
-if($_SERVER['HTTP_HOST'] == "127.0.0.1" || $_SERVER['HTTP_HOST'] == "localhost"){
-	define("WEB_URL","http://".$_SERVER['HTTP_HOST'] ."/".$baseUrl."/");
-}else{
-	define("WEB_URL","http://".$_SERVER['HTTP_HOST'] ."/".$baseUrl."/");
-}
+define("WEB_URL","http://".$_SERVER['HTTP_HOST'] ."/".$baseUrl."/");
 
 if (0 === filesize(ROOT_PATH . 'config.php') /*&& !defined('IN_INSTALL')*/) {
     header('Location: install/');
