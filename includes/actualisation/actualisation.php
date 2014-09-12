@@ -110,12 +110,12 @@ include_once('statfunctions.php');
 			$OldPertesRank = 0;
 		}
 
-		// Total des unitées consommée pour la recherche
+		// Total des unitÃ©es consommÃ©e pour la recherche
 		$Points         = GetTechnoPoints ( $CurUser );
 		$TTechCount     = $Points['TechCount'];
 		$TTechPoints    = ($Points['TechPoint'] / $game_config['stat_settings']);
 
-		// Totalisation des points accumulés par planete
+		// Totalisation des points accumulÃ©s par planete
 		$TBuildCount    = 0;
 		$TBuildPoints   = 0;
 		$TDefsCount     = 0;
@@ -198,22 +198,22 @@ include_once('statfunctions.php');
 		$QryInsertStats .= "`stat_code` = '1', "; // de 1 a 2 mis a jour de maniere automatique
 		$QryInsertStats .= "`tech_points` = '". $TTechPoints ."', ";
 		$QryInsertStats .= "`tech_count` = '". $TTechCount ."', ";
-		// $QryInsertStats .= "`tech_old_rank` = '". $OldTechRank ."', ";
+		$QryInsertStats .= "`tech_old_rank` = '". $OldTechRank ."', ";
 		$QryInsertStats .= "`build_points` = '". $TBuildPoints ."', ";
 		$QryInsertStats .= "`build_count` = '". $TBuildCount ."', ";
-		// $QryInsertStats .= "`build_old_rank` = '". $OldBuildRank ."', ";
+		$QryInsertStats .= "`build_old_rank` = '". $OldBuildRank ."', ";
 		$QryInsertStats .= "`defs_points` = '". $TDefsPoints ."', ";
 		$QryInsertStats .= "`defs_count` = '". $TDefsCount ."', ";
-		// $QryInsertStats .= "`defs_old_rank` = '". $OldDefsRank ."', ";
+		$QryInsertStats .= "`defs_old_rank` = '". $OldDefsRank ."', ";
 		$QryInsertStats .= "`fleet_points` = '". $TFleetPoints ."', ";
 		$QryInsertStats .= "`fleet_count` = '". $TFleetCount ."', ";
-		// $QryInsertStats .= "`fleet_old_rank` = '". $OldFleetRank ."', ";
+		$QryInsertStats .= "`fleet_old_rank` = '". $OldFleetRank ."', ";
 		$QryInsertStats .= "`pertes_points` = `pertes_points` + '". $TPertesPoints ."', ";
 		$QryInsertStats .= "`pertes_count` = '". $TPertesCount ."', ";
-		// $QryInsertStats .= "`pertes_old_rank` = '". $OldPertesRank ."', ";
+		$QryInsertStats .= "`pertes_old_rank` = '". $OldPertesRank ."', ";
 		$QryInsertStats .= "`total_points` = '". $GPoints ."', ";
 		$QryInsertStats .= "`total_count` = '". $GCount ."', ";
-		// $QryInsertStats .= "`total_old_rank` = '". $OldTotalRank ."', ";
+		$QryInsertStats .= "`total_old_rank` = '". $OldTotalRank ."', ";
 		$QryInsertStats .= "`stat_date` = '". $StatDate ."';";
 		doquery ( $QryInsertStats , 'statpoints');
 	}
@@ -299,7 +299,7 @@ include_once('statfunctions.php');
 		doquery ("DELETE FROM {{table}} WHERE `stat_type` = '1' AND `id_owner` = '".$CurUser['id']."';",'statpoints');
 		}
 
-		// Total des unitées consommée pour la recherche
+		// Total des unitÃ©es consommÃ©e pour la recherche
 		$QrySumSelect   = "SELECT ";
 		$QrySumSelect  .= "SUM(`tech_points`)  as `TechPoint`, ";
 		$QrySumSelect  .= "SUM(`tech_count`)   as `TechCount`, ";
@@ -339,22 +339,22 @@ include_once('statfunctions.php');
 		$QryInsertStats .= "`stat_code` = '1', "; // de 1 a 5 mis a jour de maniere automatique
 		$QryInsertStats .= "`tech_points` = '". $TTechPoints ."', ";
 		$QryInsertStats .= "`tech_count` = '". $TTechCount ."', ";
-		// $QryInsertStats .= "`tech_old_rank` = '". $OldTechRank ."', ";
+		QryInsertStats .= "`tech_old_rank` = '". $OldTechRank ."', ";
 		$QryInsertStats .= "`build_points` = '". $TBuildPoints ."', ";
 		$QryInsertStats .= "`build_count` = '". $TBuildCount ."', ";
-		// $QryInsertStats .= "`build_old_rank` = '". $OldBuildRank ."', ";
+		$QryInsertStats .= "`build_old_rank` = '". $OldBuildRank ."', ";
 		$QryInsertStats .= "`defs_points` = '". $TDefsPoints ."', ";
 		$QryInsertStats .= "`defs_count` = '". $TDefsCount ."', ";
-		// $QryInsertStats .= "`defs_old_rank` = '". $OldDefsRank ."', ";
+		$QryInsertStats .= "`defs_old_rank` = '". $OldDefsRank ."', ";
 		$QryInsertStats .= "`fleet_points` = '". $TFleetPoints ."', ";
 		$QryInsertStats .= "`fleet_count` = '". $TFleetCount ."', ";
-		// $QryInsertStats .= "`fleet_old_rank` = '". $OldFleetRank ."', ";
+		$QryInsertStats .= "`fleet_old_rank` = '". $OldFleetRank ."', ";
 		$QryInsertStats .= "`pertes_points` = '". $TPertesPoints ."', ";
 		$QryInsertStats .= "`pertes_count` = '". $TPertesCount ."', ";
-		// $QryInsertStats .= "`pertes_old_rank` = '". $OldPertesRank ."', ";
+		$QryInsertStats .= "`pertes_old_rank` = '". $OldPertesRank ."', ";
 		$QryInsertStats .= "`total_points` = '". $GPoints ."', ";
 		$QryInsertStats .= "`total_count` = '". $GCount ."', ";
-		// $QryInsertStats .= "`total_old_rank` = '". $OldTotalRank ."', ";
+		$QryInsertStats .= "`total_old_rank` = '". $OldTotalRank ."', ";
 		$QryInsertStats .= "`stat_date` = '". $StatDate ."';";
 		doquery ( $QryInsertStats , 'statpoints');
 	}
