@@ -119,16 +119,26 @@ function GetFleetPoints ($CurrentPlanet,$CurrentUser) {
 	return $RetValue;
 }
 
-function GetFlyingFleetPoints ($type,$number) {
-	global $resource, $pricelist, $reslist,$user;
+function GetVolPoints ( $FleetRow )
+{
+	global $pricelist;
+	
+	$VolCounts = 0;
+	$VolPoints = 0;
+	$fleet = explode(";", $FleetRow['fleet_array']);
+	//$a[0] = id et $a[1] = nb
+	foreach ($fleet as $a => $b) {
+		if ($b != '') {
+			$a = explode(",", $b);
+			$Units = $pricelist[ $a[0] ]['metal'] + $pricelist[ $a[0] ]['crystal'] + $pricelist[ $a[0] ]['deuterium'];
+			$VolPoints   += ($Units * $a[1]);
+			$VolCounts   += $a[1];
+		}
+		
+	}
 
-	$FleetCounts = 0;
-	$FleetPoints = 0;
-	$Units          = $pricelist[ $type ]['metal'] + $pricelist[ $type ]['crystal'] + $pricelist[ $type ]['deuterium'];
-	$FleetPoints   += ($Units * $number);
-	$FleetCounts   += $number;
-	$RetValue['FleetCount'] = $FleetCounts;
-	$RetValue['FleetPoint'] = $FleetPoints;
-
+	$RetValue['VolCount'] = $VolCounts;
+	$RetValue['VolPoint'] = $VolPoints;
+	
 	return $RetValue;
 }
